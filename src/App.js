@@ -30,7 +30,7 @@ export default function PodcastScaleEffect() {
                 <p className="leading-tight text-purple-600 truncate">
                   Frontend First — March 25, 2022
                 </p>
-                <div className="w-1/4 mt-4">
+                <div className="w-1/5 mt-4">
                   <button
                     onClick={() => setLeftPlaying(!leftPlaying)}
                     className="p-3 text-gray-900 rounded-full aspect-square"
@@ -80,7 +80,7 @@ export default function PodcastScaleEffect() {
                 <p className="leading-tight text-purple-600 truncate ">
                   Frontend First — March 25, 2022
                 </p>
-                <div className="w-1/4 mt-4">
+                <div className="w-1/5 mt-4">
                   <motion.button
                     onClick={() => setRightPlaying(!rightPlaying)}
                     transition={{
