@@ -32,16 +32,18 @@ export default function PodcastScaleEffect() {
                   Frontend First — March 25, 2022
                 </p>
                 <div className="w-1/5 mt-4">
-                  <button
-                    onClick={() => setLeftPlaying(!leftPlaying)}
-                    className="p-3 text-gray-900 rounded-full aspect-square"
-                  >
-                    {leftPlaying ? (
-                      <PauseIcon className="w-full h-full" />
-                    ) : (
-                      <PlayIcon className="w-full h-full" />
-                    )}
-                  </button>
+                  <div className="aspect-square">
+                    <button
+                      onClick={() => setLeftPlaying(!leftPlaying)}
+                      className="p-3 text-gray-900 rounded-full"
+                    >
+                      {leftPlaying ? (
+                        <PauseIcon className="w-full h-full" />
+                      ) : (
+                        <PlayIcon className="w-full h-full" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -86,41 +88,43 @@ export default function PodcastScaleEffect() {
                   Frontend First — March 25, 2022
                 </p>
                 <div className="w-1/5 mt-4">
-                  <motion.button
-                    onClick={() => setRightPlaying(!rightPlaying)}
-                    transition={{
-                      type: "spring",
-                      duration: 0.3,
-                      bounce: 0.5,
-                    }}
-                    animate={rightPlaying ? "pause" : "play"}
-                    whileTap={{ backgroundColor: "rgba(229 231 235 .25)" }}
-                    variants={{
-                      play: {
-                        scale: [null, 0.85, 1],
-                        backgroundColor: [
-                          "rgba(229 231 235 .25)",
-                          "rgba(229 231 235 0)",
-                          "rgba(229 231 235 0)",
-                        ],
-                      },
-                      pause: {
-                        scale: [null, 0.85, 1],
-                        backgroundColor: [
-                          "rgba(229 231 235 .25)",
-                          "rgba(229 231 235 0)",
-                          "rgba(229 231 235 0)",
-                        ],
-                      },
-                    }}
-                    className="p-3 text-gray-900 rounded-full aspect-square"
-                  >
-                    {rightPlaying ? (
-                      <PauseIcon className="w-full h-full" />
-                    ) : (
-                      <PlayIcon className="w-full h-full" />
-                    )}
-                  </motion.button>
+                  <div className="aspect-square">
+                    <motion.button
+                      onClick={() => setRightPlaying(!rightPlaying)}
+                      transition={{
+                        type: "spring",
+                        duration: 0.3,
+                        bounce: 0.5,
+                      }}
+                      animate={rightPlaying ? "pause" : "play"}
+                      whileTap={{ backgroundColor: "rgba(229 231 235 .25)" }}
+                      variants={{
+                        play: {
+                          scale: [null, 0.85, 1],
+                          backgroundColor: [
+                            "rgba(229 231 235 .25)",
+                            "rgba(229 231 235 0)",
+                            "rgba(229 231 235 0)",
+                          ],
+                        },
+                        pause: {
+                          scale: [null, 0.85, 1],
+                          backgroundColor: [
+                            "rgba(229 231 235 .25)",
+                            "rgba(229 231 235 0)",
+                            "rgba(229 231 235 0)",
+                          ],
+                        },
+                      }}
+                      className="p-3 text-gray-900 rounded-full"
+                    >
+                      {rightPlaying ? (
+                        <PauseIcon className="w-full h-full" />
+                      ) : (
+                        <PlayIcon className="w-full h-full" />
+                      )}
+                    </motion.button>
+                  </div>
                 </div>
               </div>
             </div>
