@@ -2,63 +2,22 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
 export default function PodcastScaleEffect() {
-  let [leftPlaying, setLeftPlaying] = useState(false);
-  let [rightPlaying, setRightPlaying] = useState(false);
+  let [playing, setPlaying] = useState(false);
 
   return (
-    <div className="px-4 py-10">
+    <div className="">
       <div className="max-w-5xl mx-auto">
-        <AnimatePresence initial={false}>
-          <div className="flex flex-col w-full space-y-16 md:flex-row md:space-y-0 md:pt-20 md:px-10 md:justify-around md:space-x-12">
-            <div>
-              <p className="text-sm font-medium text-center text-gray-400">
-                Tween transition
-              </p>
-              <div className="flex flex-col items-center justify-center w-full max-w-sm p-6 mx-auto mt-6 bg-white rounded shadow">
-                <motion.img
-                  src="/frontend-first.jpg"
-                  variants={{
-                    grow: { scale: 1 },
-                    shrink: { scale: 0.8 },
-                  }}
-                  transition="tween"
-                  animate={leftPlaying ? "grow" : "shrink"}
-                  className="block w-full rounded-lg aspect-square"
-                ></motion.img>
-                <p className="mt-4 text-lg font-medium leading-tight text-gray-900 truncate">
-                  140. Reacting to Remix!
-                </p>
-                <p className="leading-tight text-purple-600 truncate">
-                  Frontend First — March 25, 2022
-                </p>
-                <div className="w-1/5 mt-4">
-                  <div className="aspect-square">
-                    <button
-                      onClick={() => setLeftPlaying(!leftPlaying)}
-                      className="p-3 text-gray-900 rounded-full"
-                    >
-                      {leftPlaying ? (
-                        <PauseIcon className="w-full h-full" />
-                      ) : (
-                        <PlayIcon className="w-full h-full" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-center text-gray-400">
-                Spring transition
-              </p>
-              <div className="flex flex-col items-center justify-center w-full max-w-sm p-6 mx-auto mt-6 bg-white rounded shadow">
+        <div className="mt-[60px]">
+          <AnimatePresence initial={false}>
+            <div className="flex flex-col w-full md:flex-row md:space-y-0 md:pt-20 md:px-10 md:justify-around md:space-x-12">
+              <div className="flex flex-col items-center justify-center w-full p-8 mx-auto bg-white rounded-xl">
                 <motion.img
                   src="/frontend-first.jpg"
                   variants={{
                     grow: {
                       scale: 1,
-                      boxShadow:
-                        "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.1) 0px 8px 10px -6px",
+                      // boxShadow:
+                      //   "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.1) 0px 8px 10px -6px",
                       transition: {
                         type: "spring",
                         duration: 1,
@@ -68,8 +27,8 @@ export default function PodcastScaleEffect() {
                     },
                     shrink: {
                       scale: 0.8,
-                      boxShadow:
-                        "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+                      // boxShadow:
+                      //   "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
                       transition: {
                         type: "spring",
                         duration: 0.7,
@@ -78,8 +37,8 @@ export default function PodcastScaleEffect() {
                       },
                     },
                   }}
-                  animate={rightPlaying ? "grow" : "shrink"}
-                  className="block w-full rounded-lg shadow-xl aspect-square"
+                  animate={playing ? "grow" : "shrink"}
+                  className="block w-full rounded-md shadow-2xl aspect-square"
                 ></motion.img>
                 <p className="mt-4 text-lg font-medium leading-tight text-gray-900 truncate">
                   140. Reacting to Remix!
@@ -90,13 +49,13 @@ export default function PodcastScaleEffect() {
                 <div className="w-1/5 mt-4">
                   <div className="aspect-square">
                     <motion.button
-                      onClick={() => setRightPlaying(!rightPlaying)}
+                      onClick={() => setPlaying(!playing)}
                       transition={{
                         type: "spring",
                         duration: 0.3,
                         bounce: 0.5,
                       }}
-                      animate={rightPlaying ? "pause" : "play"}
+                      animate={playing ? "pause" : "play"}
                       whileTap={{ backgroundColor: "rgba(229 231 235 .25)" }}
                       variants={{
                         play: {
@@ -118,7 +77,7 @@ export default function PodcastScaleEffect() {
                       }}
                       className="p-3 text-gray-900 rounded-full"
                     >
-                      {rightPlaying ? (
+                      {playing ? (
                         <PauseIcon className="w-full h-full" />
                       ) : (
                         <PlayIcon className="w-full h-full" />
@@ -128,8 +87,8 @@ export default function PodcastScaleEffect() {
                 </div>
               </div>
             </div>
-          </div>
-        </AnimatePresence>
+          </AnimatePresence>
+        </div>
         <div className="mt-20 text-center">
           <p className="text-sm text-gray-500">
             View the source: <br className="md:hidden" />
