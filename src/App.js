@@ -7,90 +7,116 @@ export default function PodcastScaleEffect() {
 
   return (
     <div className="h-screen px-4 pt-10 bg-gray-200">
-      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow">
+      <div className="max-w-6xl mx-auto">
         <AnimatePresence initial={false}>
-          <div className="flex justify-around w-full px-20 py-20 space-x-20">
-            <div className="flex flex-col items-center justify-center w-full max-w-sm">
-              <motion.img
-                src="/frontend-first.jpg"
-                variants={{
-                  grow: { scale: 1 },
-                  shrink: { scale: 0.8 },
-                }}
-                animate={leftPlaying ? "grow" : "shrink"}
-                className="block w-full bg-blue-500 rounded-lg aspect-square"
-              ></motion.img>
-              <div className="w-1/4 mt-4 ">
-                <button
-                  onClick={() => setLeftPlaying(!leftPlaying)}
-                  className="p-4 text-gray-600 rounded-full aspect-square"
-                >
-                  {leftPlaying ? (
-                    <PauseIcon className="w-full h-full" />
-                  ) : (
-                    <PlayIcon className="w-full h-full" />
-                  )}
-                </button>
+          <div className="flex justify-around w-full px-20 py-20 space-x-4">
+            <div>
+              <p className="text-sm font-medium text-center text-gray-400">
+                Default transition
+              </p>
+              <div className="flex flex-col items-center justify-center w-full max-w-sm p-6 mt-6 bg-white rounded shadow">
+                <motion.img
+                  src="/frontend-first.jpg"
+                  variants={{
+                    grow: { scale: 1 },
+                    shrink: { scale: 0.8 },
+                  }}
+                  animate={leftPlaying ? "grow" : "shrink"}
+                  className="block w-full rounded-lg aspect-square"
+                ></motion.img>
+                <p className="mt-4 text-lg font-medium leading-tight text-gray-900 truncate">
+                  140. Reacting to Remix!
+                </p>
+                <p className="leading-tight text-purple-600 truncate">
+                  Frontend First — March 25, 2022
+                </p>
+                <div className="w-1/4 mt-4">
+                  <button
+                    onClick={() => setLeftPlaying(!leftPlaying)}
+                    className="p-3 text-gray-900 rounded-full aspect-square"
+                  >
+                    {leftPlaying ? (
+                      <PauseIcon className="w-full h-full" />
+                    ) : (
+                      <PlayIcon className="w-full h-full" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="flex flex-col items-center justify-center w-full max-w-sm">
-              <motion.img
-                src="/frontend-first.jpg"
-                variants={{
-                  grow: {
-                    scale: 1,
-                    transition: {
-                      type: "spring",
-                      duration: 1,
-                      bounce: 0.5,
-                      delay: 0.05,
-                    },
-                  },
-                  shrink: {
-                    scale: 0.8,
-                    transition: {
-                      type: "spring",
-                      duration: 0.7,
-                      bounce: 0,
-                      delay: 0.05,
-                    },
-                  },
-                }}
-                animate={rightPlaying ? "grow" : "shrink"}
-                className="block w-full bg-blue-500 rounded-lg aspect-square"
-              ></motion.img>
-              <div className="w-1/4 mt-4">
-                <motion.button
-                  onClick={() => setRightPlaying(!rightPlaying)}
-                  transition={{ type: "spring", duration: 0.3, bounce: 0.5 }}
-                  animate={rightPlaying ? "pause" : "play"}
-                  whileTap={{ backgroundColor: "rgba(229 231 235 .20)" }}
+            <div>
+              <p className="text-sm font-medium text-center text-gray-400">
+                Spring transition
+              </p>
+              <div className="flex flex-col items-center justify-center w-full max-w-sm p-6 mt-6 bg-white rounded shadow">
+                <motion.img
+                  src="/frontend-first.jpg"
                   variants={{
-                    play: {
-                      scale: [null, 0.85, 1],
-                      backgroundColor: [
-                        "rgba(229 231 235 .20)",
-                        "rgba(229 231 235 0)",
-                        "rgba(229 231 235 0)",
-                      ],
+                    grow: {
+                      scale: 1,
+                      transition: {
+                        type: "spring",
+                        duration: 1,
+                        bounce: 0.5,
+                        delay: 0.05,
+                      },
                     },
-                    pause: {
-                      scale: [null, 0.85, 1],
-                      backgroundColor: [
-                        "rgba(229 231 235 .20)",
-                        "rgba(229 231 235 0)",
-                        "rgba(229 231 235 0)",
-                      ],
+                    shrink: {
+                      scale: 0.8,
+                      transition: {
+                        type: "spring",
+                        duration: 0.7,
+                        bounce: 0,
+                        delay: 0.05,
+                      },
                     },
                   }}
-                  className="p-4 text-gray-600 rounded-full aspect-square"
-                >
-                  {rightPlaying ? (
-                    <PauseIcon className="w-full h-full" />
-                  ) : (
-                    <PlayIcon className="w-full h-full" />
-                  )}
-                </motion.button>
+                  animate={rightPlaying ? "grow" : "shrink"}
+                  className="block w-full rounded-lg aspect-square"
+                ></motion.img>
+                <p className="mt-4 text-lg font-medium leading-tight text-gray-900 truncate">
+                  140. Reacting to Remix!
+                </p>
+                <p className="leading-tight text-purple-600 truncate ">
+                  Frontend First — March 25, 2022
+                </p>
+                <div className="w-1/4 mt-4">
+                  <motion.button
+                    onClick={() => setRightPlaying(!rightPlaying)}
+                    transition={{
+                      type: "spring",
+                      duration: 0.3,
+                      bounce: 0.5,
+                    }}
+                    animate={rightPlaying ? "pause" : "play"}
+                    whileTap={{ backgroundColor: "rgba(229 231 235 .20)" }}
+                    variants={{
+                      play: {
+                        scale: [null, 0.85, 1],
+                        backgroundColor: [
+                          "rgba(229 231 235 .20)",
+                          "rgba(229 231 235 0)",
+                          "rgba(229 231 235 0)",
+                        ],
+                      },
+                      pause: {
+                        scale: [null, 0.85, 1],
+                        backgroundColor: [
+                          "rgba(229 231 235 .20)",
+                          "rgba(229 231 235 0)",
+                          "rgba(229 231 235 0)",
+                        ],
+                      },
+                    }}
+                    className="p-3 text-gray-900 rounded-full aspect-square"
+                  >
+                    {rightPlaying ? (
+                      <PauseIcon className="w-full h-full" />
+                    ) : (
+                      <PlayIcon className="w-full h-full" />
+                    )}
+                  </motion.button>
+                </div>
               </div>
             </div>
           </div>
