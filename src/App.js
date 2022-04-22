@@ -54,6 +54,8 @@ export default function PodcastScaleEffect() {
                   variants={{
                     grow: {
                       scale: 1,
+                      boxShadow:
+                        "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.1) 0px 8px 10px -6px",
                       transition: {
                         type: "spring",
                         duration: 1,
@@ -63,6 +65,8 @@ export default function PodcastScaleEffect() {
                     },
                     shrink: {
                       scale: 0.8,
+                      boxShadow:
+                        "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
                       transition: {
                         type: "spring",
                         duration: 0.7,
@@ -72,7 +76,7 @@ export default function PodcastScaleEffect() {
                     },
                   }}
                   animate={rightPlaying ? "grow" : "shrink"}
-                  className="block w-full rounded-lg aspect-square"
+                  className="block w-full rounded-lg shadow-xl aspect-square"
                 ></motion.img>
                 <p className="mt-4 text-lg font-medium leading-tight text-gray-900 truncate">
                   140. Reacting to Remix!
