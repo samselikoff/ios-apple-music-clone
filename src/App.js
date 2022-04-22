@@ -6,15 +6,15 @@ export default function PodcastScaleEffect() {
   let [rightPlaying, setRightPlaying] = useState(false);
 
   return (
-    <div className="h-screen px-4 pt-10 bg-gray-200">
-      <div className="max-w-6xl mx-auto">
+    <div className="px-4 py-10">
+      <div className="max-w-5xl mx-auto">
         <AnimatePresence initial={false}>
-          <div className="flex justify-around w-full px-20 py-20 space-x-4">
+          <div className="flex flex-col w-full space-y-16 md:flex-row md:space-y-0 md:pt-20 md:px-10 md:justify-around md:space-x-12">
             <div>
               <p className="text-sm font-medium text-center text-gray-400">
                 Default transition
               </p>
-              <div className="flex flex-col items-center justify-center w-full max-w-sm p-6 mt-6 bg-white rounded shadow">
+              <div className="flex flex-col items-center justify-center w-full max-w-sm p-6 mx-auto mt-6 bg-white rounded shadow">
                 <motion.img
                   src="/frontend-first.jpg"
                   variants={{
@@ -48,7 +48,7 @@ export default function PodcastScaleEffect() {
               <p className="text-sm font-medium text-center text-gray-400">
                 Spring transition
               </p>
-              <div className="flex flex-col items-center justify-center w-full max-w-sm p-6 mt-6 bg-white rounded shadow">
+              <div className="flex flex-col items-center justify-center w-full max-w-sm p-6 mx-auto mt-6 bg-white rounded shadow">
                 <motion.img
                   src="/frontend-first.jpg"
                   variants={{
@@ -89,12 +89,12 @@ export default function PodcastScaleEffect() {
                       bounce: 0.5,
                     }}
                     animate={rightPlaying ? "pause" : "play"}
-                    whileTap={{ backgroundColor: "rgba(229 231 235 .20)" }}
+                    whileTap={{ backgroundColor: "rgba(229 231 235 .25)" }}
                     variants={{
                       play: {
                         scale: [null, 0.85, 1],
                         backgroundColor: [
-                          "rgba(229 231 235 .20)",
+                          "rgba(229 231 235 .25)",
                           "rgba(229 231 235 0)",
                           "rgba(229 231 235 0)",
                         ],
@@ -102,7 +102,7 @@ export default function PodcastScaleEffect() {
                       pause: {
                         scale: [null, 0.85, 1],
                         backgroundColor: [
-                          "rgba(229 231 235 .20)",
+                          "rgba(229 231 235 .25)",
                           "rgba(229 231 235 0)",
                           "rgba(229 231 235 0)",
                         ],
@@ -121,6 +121,17 @@ export default function PodcastScaleEffect() {
             </div>
           </div>
         </AnimatePresence>
+        <div className="mt-20 text-center">
+          <p className="text-sm text-gray-500">
+            View the source: <br className="md:hidden" />
+            <a
+              className="font-medium text-gray-600 underline"
+              href="https://github.com/samselikoff/ios-podcast-scale-effect/blob/main/src/App.js"
+            >
+              github.com/samselikoff/ios-podcast-scale-effect
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
