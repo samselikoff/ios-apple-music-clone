@@ -12,7 +12,7 @@ export default function PodcastScaleEffect() {
           <div className="flex flex-col w-full space-y-16 md:flex-row md:space-y-0 md:pt-20 md:px-10 md:justify-around md:space-x-12">
             <div>
               <p className="text-sm font-medium text-center text-gray-400">
-                Default transition
+                Tween transition
               </p>
               <div className="flex flex-col items-center justify-center w-full max-w-sm p-6 mx-auto mt-6 bg-white rounded shadow">
                 <motion.img
@@ -21,6 +21,7 @@ export default function PodcastScaleEffect() {
                     grow: { scale: 1 },
                     shrink: { scale: 0.8 },
                   }}
+                  transition="tween"
                   animate={leftPlaying ? "grow" : "shrink"}
                   className="block w-full rounded-lg aspect-square"
                 ></motion.img>
