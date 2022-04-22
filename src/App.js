@@ -6,10 +6,10 @@ export default function PodcastScaleEffect() {
   let [rightPlaying, setRightPlaying] = useState(false);
 
   return (
-    <div className="h-screen pt-10 bg-gray-200">
+    <div className="h-screen px-4 pt-10 bg-gray-200">
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow">
         <AnimatePresence initial={false}>
-          <div className="flex justify-around w-full px-20 py-20 space-x-8">
+          <div className="flex justify-around w-full px-20 py-20 space-x-20">
             <div className="flex flex-col items-center justify-center w-full max-w-sm">
               <motion.img
                 src="/frontend-first.jpg"
@@ -20,15 +20,15 @@ export default function PodcastScaleEffect() {
                 animate={leftPlaying ? "grow" : "shrink"}
                 className="block w-full bg-blue-500 rounded-lg aspect-square"
               ></motion.img>
-              <div className="mt-4">
+              <div className="w-1/4 mt-4 ">
                 <button
                   onClick={() => setLeftPlaying(!leftPlaying)}
-                  className="p-4 text-gray-600 rounded-full"
+                  className="p-4 text-gray-600 rounded-full aspect-square"
                 >
                   {leftPlaying ? (
-                    <PauseIcon className="w-14 h-14" />
+                    <PauseIcon className="w-full h-full" />
                   ) : (
-                    <PlayIcon className="w-14 h-14" />
+                    <PlayIcon className="w-full h-full" />
                   )}
                 </button>
               </div>
@@ -59,7 +59,7 @@ export default function PodcastScaleEffect() {
                 animate={rightPlaying ? "grow" : "shrink"}
                 className="block w-full bg-blue-500 rounded-lg aspect-square"
               ></motion.img>
-              <div className="mt-4">
+              <div className="w-1/4 mt-4">
                 <motion.button
                   onClick={() => setRightPlaying(!rightPlaying)}
                   transition={{ type: "spring", duration: 0.3, bounce: 0.5 }}
@@ -83,12 +83,12 @@ export default function PodcastScaleEffect() {
                       ],
                     },
                   }}
-                  className="p-4 text-gray-600 rounded-full"
+                  className="p-4 text-gray-600 rounded-full aspect-square"
                 >
                   {rightPlaying ? (
-                    <PauseIcon className="w-14 h-14" />
+                    <PauseIcon className="w-full h-full" />
                   ) : (
-                    <PlayIcon className="w-14 h-14" />
+                    <PlayIcon className="w-full h-full" />
                   )}
                 </motion.button>
               </div>
