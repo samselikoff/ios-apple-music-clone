@@ -1,16 +1,51 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import {
+  animate,
+  AnimatePresence,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
+import { useEffect, useState } from "react";
 
 export default function PodcastScaleEffect() {
   let [playing, setPlaying] = useState(false);
+  let interval = useMotionValue(0);
+  let y = useTransform(interval, (value) => 50 + Math.sin(value) * 50);
+  let x = useTransform(interval, (value) => 50 + Math.cos(value) * 50);
+  let backgroundPosition = useMotionTemplate`${x}% ${y}%`;
+
+  useEffect(() => {
+    let controls = animate(interval, [0, Math.PI * 2], {
+      repeat: Infinity,
+      duration: 30,
+      ease: "linear",
+    });
+
+    return controls.stop;
+  }, [interval]);
 
   return (
     <div className="">
       <div className="max-w-5xl mx-auto">
         <div className="">
           <AnimatePresence initial={false}>
-            <div className="flex flex-col w-full md:flex-row md:space-y-0 md:pt-20 md:px-10 md:justify-around md:space-x-12">
-              <div className="mesh flex flex-col items-center w-full px-6 pt-[92px] mx-auto min-h-screen">
+            <div
+              style={{ backgroundPosition: "100%" }}
+              className="flex flex-col w-full md:flex-row md:space-y-0 md:pt-20 md:px-10 md:justify-around md:space-x-12"
+            >
+              <motion.div
+                style={{
+                  backgroundSize: "200% 200%",
+                  backgroundPosition,
+                  backgroundColor: "#322840",
+                  backgroundImage: `
+                    radial-gradient(at 21% 33%, #242549 0px, transparent 50%),
+                    radial-gradient(at 79% 32%, #35245e 0px, transparent 50%),
+                    radial-gradient(at 26% 83%, #0e2452 0px, transparent 50%)`,
+                }}
+                className="flex flex-col items-center w-full px-6 pt-[92px] mx-auto min-h-screen"
+              >
                 <motion.img
                   src="/album.webp"
                   variants={{
@@ -139,7 +174,7 @@ export default function PodcastScaleEffect() {
                     <VolumeHighIcon className="h-5 text-white/50" />
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </AnimatePresence>
         </div>
