@@ -5,3 +5,54 @@
 button {
   -webkit-tap-highlight-color: transparent;
 }
+
+.mesh {
+  background-color: #322840;
+
+  background-image: radial-gradient(at 21% 33%, #211a37 0px, transparent 50%),
+    radial-gradient(at 79% 32%, #252844 0px, transparent 50%),
+    radial-gradient(at 26% 83%, #1c2e54 0px, transparent 50%);
+
+  /* ryan original colors */
+  /* background-image: radial-gradient(
+      at 21% 33%,
+      hsla(242, 45%, 10%, 1) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 79% 32%, hsla(231, 54%, 23%, 1) 0px, transparent 50%),
+    radial-gradient(at 26% 83%, hsla(232, 45%, 36%, 1) 0px, transparent 50%); */
+
+  /* debug colors */
+  /* background-image: radial-gradient(at 21% 33%, blue 0px, transparent 50%),
+    radial-gradient(at 79% 42%, red 0px, transparent 50%),
+    radial-gradient(at 26% 83%, green 0px, transparent 50%); */
+  /* animation: gradient 3s linear infinite; */
+  /* animation: rotate 3s linear infinite; */
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-size: 200% 200%;
+    background-position: 15% 15%;
+  }
+  33% {
+    background-size: 220% 220%;
+    background-position: 85% 50%;
+  }
+  66% {
+    background-size: 250% 250%;
+    background-position: 50% 90%;
+  }
+  100% {
+    background-size: 200% 200%;
+    background-position: 15% 15%;
+  }
+}
