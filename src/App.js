@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 
 export default function PodcastScaleEffect() {
   let [playing, setPlaying] = useState(false);
+  let [pressing, setPressing] = useState(false);
+
   let interval = useMotionValue(0);
   let y = useTransform(interval, (value) => 50 + Math.sin(value) * 50);
   let x = useTransform(interval, (value) => 50 + Math.cos(value) * 50);
@@ -120,29 +122,34 @@ export default function PodcastScaleEffect() {
                       <button>
                         <SkipIcon className="w-10 text-white rotate-180" />
                       </button>
+
                       <motion.button
-                        onClick={() => setPlaying(!playing)}
                         transition={{
                           type: "spring",
                           duration: 0.3,
                           bounce: 0.5,
                         }}
-                        animate={playing ? "pause" : "play"}
-                        whileTap={{ backgroundColor: "rgba(229 231 235 .25)" }}
+                        animate={pressing ? "pressed" : "unpressed"}
+                        onTapStart={() => {
+                          setPressing(true);
+                        }}
+                        onAnimationComplete={(definition) => {
+                          console.log({ definition });
+                        }}
+                        onTap={() => {
+                          setPressing(false);
+                          setPlaying(!playing);
+                        }}
                         variants={{
-                          play: {
-                            scale: [null, 0.85, 1],
-                            backgroundColor: [
-                              "rgba(229 231 235 .25)",
-                              "rgba(229 231 235 0)",
-                              "rgba(229 231 235 0)",
-                            ],
+                          pressed: {
+                            scale: 0.85,
+                            backgroundColor: "rgba(229 231 235 .25)",
                           },
-                          pause: {
+                          unpressed: {
                             scale: [null, 0.85, 1],
                             backgroundColor: [
+                              null,
                               "rgba(229 231 235 .25)",
-                              "rgba(229 231 235 0)",
                               "rgba(229 231 235 0)",
                             ],
                           },
@@ -155,6 +162,7 @@ export default function PodcastScaleEffect() {
                           <PlayIcon className="w-full h-full" />
                         )}
                       </motion.button>
+
                       <button>
                         <SkipIcon className="w-10 text-white" />
                       </button>
