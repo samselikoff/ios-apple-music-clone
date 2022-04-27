@@ -124,43 +124,83 @@ export default function PodcastScaleEffect() {
                       </button>
 
                       <motion.button
-                        transition={{
-                          type: "spring",
-                          duration: 0.3,
-                          bounce: 0.5,
-                        }}
                         animate={pressing ? "pressed" : "unpressed"}
                         onTapStart={() => {
                           setPressing(true);
-                        }}
-                        onAnimationComplete={(definition) => {
-                          console.log({ definition });
                         }}
                         onTap={() => {
                           setPressing(false);
                           setPlaying(!playing);
                         }}
-                        variants={{
-                          pressed: {
-                            scale: 0.85,
-                            backgroundColor: "rgba(229 231 235 .25)",
-                          },
-                          unpressed: {
-                            scale: [null, 0.85, 1],
-                            backgroundColor: [
-                              null,
-                              "rgba(229 231 235 .25)",
-                              "rgba(229 231 235 0)",
-                            ],
-                          },
-                        }}
-                        className="w-20 h-20 p-3 text-white rounded-full"
+                        // variants={{
+                        //   pressed: {
+                        //     // scale: 0.85,
+                        //     // backgroundColor: "rgba(229 231 235 .25)",
+                        //   },
+                        //   unpressed: {
+                        //     // scale: [null, 0.85, 1],
+                        //     // backgroundColor: [
+                        //     //   null,
+                        //     //   "rgba(229 231 235 .25)",
+                        //     //   "rgba(229 231 235 0)",
+                        //     // ],
+                        //   },
+                        // }}
+                        // transition={{
+                        //   type: "spring",
+                        //   duration: 0.3,
+                        //   bounce: 0.5,
+                        // }}
+                        className="relative w-20 h-20 p-3 text-white rounded-full"
                       >
-                        {playing ? (
-                          <PauseIcon className="w-full h-full" />
-                        ) : (
-                          <PlayIcon className="w-full h-full" />
-                        )}
+                        <motion.span
+                          // animate={pressing ? "pressed" : "unpressed"}
+                          variants={{
+                            pressed: {
+                              scale: 0.85,
+                              backgroundColor: "rgba(229 231 235 .25)",
+                              transition: {
+                                type: "spring",
+                                duration: 0.3,
+                                bounce: 0.5,
+                              },
+                            },
+                            unpressed: {
+                              scale: [null, 0.85, 1],
+                              backgroundColor: [
+                                null,
+                                "rgba(229 231 235 .25)",
+                                "rgba(229 231 235 0)",
+                              ],
+                              transition: {
+                                type: "spring",
+                                duration: 0.3,
+                                bounce: 0.5,
+                              },
+                            },
+                          }}
+                          className="absolute inset-0 rounded-full"
+                        ></motion.span>
+                        <motion.span
+                          variants={{
+                            pressed: { scale: 0.85 },
+                            unpressed: {
+                              scale: [null, 0.85, 1],
+                              transition: {
+                                type: "spring",
+                                duration: 0.6,
+                                bounce: 0.5,
+                              },
+                            },
+                          }}
+                          className="block"
+                        >
+                          {playing ? (
+                            <PauseIcon className="w-full h-full" />
+                          ) : (
+                            <PlayIcon className="w-full h-full" />
+                          )}
+                        </motion.span>
                       </motion.button>
 
                       <button>
