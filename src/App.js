@@ -2,30 +2,74 @@ import {
   animate,
   AnimatePresence,
   motion,
+  useDragControls,
   useMotionTemplate,
   useMotionValue,
   useTransform,
 } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const DURATION = 186;
 
 export default function PodcastScaleEffect() {
   let [playing, setPlaying] = useState(false);
   let [pressing, setPressing] = useState(false);
+  let [currentTime, setCurrentTime] = useState(0);
 
   let interval = useMotionValue(0);
   let y = useTransform(interval, (value) => 50 + Math.sin(value) * 50);
   let x = useTransform(interval, (value) => 50 + Math.cos(value) * 50);
   let backgroundPosition = useMotionTemplate`${x}% ${y}%`;
+  let constraintsRef = useRef(null);
+
+  let mins = Math.floor(currentTime / 60);
+  let secs = `${currentTime % 60}`.padStart(2, "0");
+  let timecode = `${mins}:${secs}`;
+  let minsRemaining = Math.floor((DURATION - currentTime) / 60);
+  let secsRemaining = `${(DURATION - currentTime) % 60}`.padStart(2, "0");
+  let timecodeRemaining = `${minsRemaining}:${secsRemaining}`;
+
+  let progress = (currentTime / DURATION) * 100;
+  // let animatedProgress = useMotionValue(progress)
+
+  let dragControls = useDragControls();
+  let currentTimePrecise = useMotionValue(currentTime);
+  let progressPrecise = useTransform(
+    currentTimePrecise,
+    (v) => (v / DURATION) * 100
+  );
+  let progressPreciseWidth = useMotionTemplate`${progressPrecise}%`;
+
+  // useEffect(() => {
+  //   let controls = animate(interval, [0, Math.PI * 2], {
+  //     repeat: Infinity,
+  //     duration: 30,
+  //     ease: "linear",
+  //   });
+
+  //   return controls.stop;
+  // }, [interval]);
 
   useEffect(() => {
-    let controls = animate(interval, [0, Math.PI * 2], {
-      repeat: Infinity,
-      duration: 30,
-      ease: "linear",
-    });
+    if (playing) {
+      let interval1Id = setInterval(() => {
+        if (currentTime < DURATION) {
+          setCurrentTime((t) => t + 1);
+        }
+      }, 1000);
 
-    return controls.stop;
-  }, [interval]);
+      let interval2Id = setInterval(() => {
+        if (currentTime < DURATION) {
+          currentTimePrecise.set(currentTimePrecise.get() + 0.01);
+        }
+      }, 10);
+
+      return () => {
+        clearInterval(interval1Id);
+        clearInterval(interval2Id);
+      };
+    }
+  }, [playing, currentTime, currentTimePrecise]);
 
   return (
     <div className="">
@@ -84,7 +128,7 @@ export default function PodcastScaleEffect() {
                       <p className="text-xl leading-tight tracking-wide text-white truncate">
                         You Right
                       </p>
-                      <p className="text-xl leading-tight truncate text-white/40">
+                      <p className="text-xl leading-tight truncate text-[#A49FC3]/90">
                         Doja Cat & The Weeknd
                       </p>
                     </div>
@@ -96,23 +140,69 @@ export default function PodcastScaleEffect() {
 
                   {/* Progress bar */}
                   <div className="relative w-full mt-[25px]">
-                    <div>
-                      <div className="w-full h-[3px] bg-white/20 rounded-full"></div>
-                      <div className="absolute inset-0 w-8 h-[3px] bg-[#89848E] rounded-full"></div>
-                      <div className="absolute inset-y-0 w-[7px] h-[7px] -mt-[2px] -ml-0.5 bg-[#89848E] rounded-full left-8"></div>
+                    <div
+                      className="relative"
+                      onPointerDown={(event) => {
+                        dragControls.start(event, { snapToCursor: true });
+                      }}
+                    >
+                      <div className="w-full h-[3px] bg-[#5A526F] rounded-full"></div>
+                      <motion.div
+                        style={{ width: progressPreciseWidth }}
+                        className="absolute top-0"
+                      >
+                        <div className="absolute inset-0 h-[3px] bg-[#A29CC0] rounded-full"></div>
+                      </motion.div>
+                      <div
+                        className="absolute inset-0 -mx-2.5"
+                        ref={constraintsRef}
+                      >
+                        <motion.div
+                          drag="x"
+                          dragConstraints={constraintsRef}
+                          dragControls={dragControls}
+                          dragElastic={0}
+                          dragMomentum={false}
+                          onDrag={(event, info) => {
+                            // 32 and 20 are adjusting for margins
+                            let draggedProgress =
+                              (info.point.x - 32) /
+                              (constraintsRef.current.clientWidth - 20);
+                            let newProgress =
+                              draggedProgress > 1
+                                ? 1
+                                : draggedProgress < 0
+                                ? 0
+                                : draggedProgress;
+                            setCurrentTime(Math.floor(newProgress * DURATION));
+                            currentTimePrecise.set(newProgress * DURATION);
+                          }}
+                          whileTap={{ scale: 4.75 }}
+                          transition={{ type: "tween", duration: 0.15 }}
+                          className="absolute left-0 -top-2.5 p-2 rounded-full"
+                        >
+                          <div className="shadow-lg z-10 w-[7px] h-[7px] bg-[#A29CC0] rounded-full"></div>
+                        </motion.div>
+                      </div>
                     </div>
                     <div className="flex justify-between mt-[11px]">
-                      <p className="text-[11px] font-medium tracking-wide text-white/20">
-                        0:18
-                      </p>
+                      <motion.p
+                        className="absolute left-0 text-[11px] font-medium tracking-wide text-white/20 tabular-nums"
+                        animate={{ y: progress < 15 ? 15 : 0 }}
+                      >
+                        {timecode}
+                      </motion.p>
                       <img
-                        className="w-20 pt-0.5 opacity-50"
+                        className="h-[13px] pt-0.5 mx-auto"
                         src="/dolby.svg"
                         alt=""
                       />
-                      <p className="text-[11px] font-medium tracking-wide text-white/20">
-                        -3:03
-                      </p>
+                      <motion.p
+                        className="absolute right-0 text-[11px] font-medium tracking-wide text-white/20 tabular-nums"
+                        animate={{ y: progress > 85 ? 15 : 0 }}
+                      >
+                        -{timecodeRemaining}
+                      </motion.p>
                     </div>
                   </div>
 
