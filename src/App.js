@@ -21,13 +21,13 @@ export default function App() {
       <div className="max-w-[390px] w-full flex mx-auto max-h-[844px] flex-col h-screen relative">
         <div className="flex flex-col items-center w-full px-6 pt-[92px] flex-1 shadow-2xl rounded">
           <AnimatedGradient />
+
           <motion.img
             src="/album.webp"
+            animate={playing ? "grow" : "shrink"}
             variants={{
               grow: {
                 scale: 1,
-                // boxShadow:
-                //   "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.1) 0px 8px 10px -6px",
                 transition: {
                   type: "spring",
                   duration: 1,
@@ -37,8 +37,6 @@ export default function App() {
               },
               shrink: {
                 scale: 0.73,
-                // boxShadow:
-                //   "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
                 transition: {
                   type: "spring",
                   duration: 0.7,
@@ -47,10 +45,9 @@ export default function App() {
                 },
               },
             }}
-            animate={playing ? "grow" : "shrink"}
             initial={false}
             className="relative z-10 block w-full shadow-2xl rounded-xl aspect-square"
-          ></motion.img>
+          />
 
           <div className="mt-[45px] w-full px-2">
             <Title />
@@ -66,7 +63,7 @@ export default function App() {
               onPlayPause={() => setPlaying(!playing)}
             />
 
-            <Volume />
+            {/* <Volume /> */}
 
             <IconBar />
           </div>
@@ -144,7 +141,9 @@ function Title() {
 
 function ProgressBar({ playing, currentTime, setCurrentTime }) {
   let [dragging, setDragging] = useState(false);
-  let constraintsRef = useRef(null);
+  let constraintsRef = useRef();
+  let fullBarRef = useRef();
+  let scrubberRef = useRef();
   let scrubberX = useMotionValue(0);
   let currentTimePrecise = useMotionValue(currentTime);
   let progressPrecise = useTransform(
@@ -175,7 +174,7 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
           let newCurrentTimePrecise = currentTimePrecise.get() + 0.01;
           currentTimePrecise.set(newCurrentTimePrecise);
           let newX = getXFromProgress({
-            container: constraintsRef.current,
+            container: fullBarRef.current,
             progress: currentTimePrecise.get() / DURATION,
           });
           scrubberX.set(newX);
@@ -195,35 +194,40 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
         className="relative"
         onPointerDown={(event) => {
           let newProgress = getProgress({
-            container: constraintsRef.current,
-            event,
+            containerRef: fullBarRef,
+            x: event.clientX,
           });
-          setDragging(true);
           dragControls.start(event, { snapToCursor: true });
           setCurrentTime(Math.floor(newProgress * DURATION));
           currentTimePrecise.set(newProgress * DURATION);
         }}
       >
-        <div className="w-full h-[3px] bg-[#5A526F] rounded-full"></div>
+        <div
+          ref={fullBarRef}
+          className="w-full h-[3px] bg-[#5A526F] rounded-full"
+        ></div>
         <motion.div
           style={{ width: progressPreciseWidth }}
           className="absolute top-0"
         >
           <div className="absolute inset-0 h-[3px] bg-[#A29CC0] rounded-full"></div>
         </motion.div>
-        <div className="absolute inset-0" ref={constraintsRef}>
+        <div className="absolute inset-0 -mx-[4px]" ref={constraintsRef}>
           <motion.button
+            ref={scrubberRef}
             drag="x"
             dragConstraints={constraintsRef}
             dragControls={dragControls}
             dragElastic={0}
             dragMomentum={false}
             style={{ x: scrubberX }}
-            // animate={{ scale: dragging ? 4.75 : 1 }}
-            onDrag={(event) => {
+            onDrag={() => {
+              let scrubberBounds = scrubberRef.current.getBoundingClientRect();
+              let middleOfScrubber =
+                scrubberBounds.x + scrubberBounds.width / 2;
               let newProgress = getProgress({
-                container: constraintsRef.current,
-                event,
+                containerRef: fullBarRef,
+                x: middleOfScrubber,
               });
               setCurrentTime(Math.floor(newProgress * DURATION));
               currentTimePrecise.set(newProgress * DURATION);
@@ -240,13 +244,12 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
             onDragEnd={() => {
               setDragging(false);
             }}
-            className="absolute -top-[2px] flex items-center justify-center rounded-full cursor-grab active:cursor-grabbing blur-0"
+            className="absolute flex items-center justify-center rounded-full -top-[2px]  cursor-grab active:cursor-grabbing"
           >
             <motion.div
               animate={{ scale: dragging ? 4.75 : 1 }}
               transition={{ type: "tween", duration: 0.15 }}
-              className=" w-[7px] h-[7px] bg-[#A29CC0] rounded-full"
-              style={{ x: -2 }}
+              className="w-[7px] h-[7px] bg-[#A29CC0] rounded-full"
             ></motion.div>
             {/* Scaling the above div is blurry in safari, was trying this vg */}
             {/* <motion.svg
@@ -391,9 +394,9 @@ function IconBar() {
   );
 }
 
-function getProgress({ container, event }) {
-  let { x, width } = container.getBoundingClientRect();
-  let draggedProgress = (event.clientX - x) / width;
+function getProgress({ x, containerRef }) {
+  let bounds = containerRef.current.getBoundingClientRect();
+  let draggedProgress = (x - bounds.x) / bounds.width;
   let newProgress =
     draggedProgress > 1 ? 1 : draggedProgress < 0 ? 0 : draggedProgress;
 
@@ -401,10 +404,9 @@ function getProgress({ container, event }) {
 }
 
 function getXFromProgress({ container, progress }) {
-  let { width } = container.getBoundingClientRect();
-  let newX = progress * width;
+  let bounds = container.getBoundingClientRect();
 
-  return newX;
+  return progress * bounds.width;
 }
 
 function Button({ children, onClick = () => {}, className }) {
