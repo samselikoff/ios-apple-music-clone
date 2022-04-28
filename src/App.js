@@ -93,7 +93,7 @@ export default function App() {
                 radial-gradient(at 79% 32%, #35245e 0px, transparent 50%),
                 radial-gradient(at 26% 83%, #0e2452 0px, transparent 50%)`,
             }}
-            className="flex flex-col items-center w-full px-6 pt-[92px] flex-1 shadow-2xl"
+            className="flex flex-col items-center w-full px-6 pt-[92px] flex-1 shadow-2xl rounded"
           >
             <motion.img
               src="/album.webp"
@@ -181,9 +181,9 @@ export default function App() {
                       }}
                       whileTap={{ scale: 4.75 }}
                       transition={{ type: "tween", duration: 0.15 }}
-                      className="absolute left-0 -top-2.5 p-2 rounded-full"
+                      className="absolute -top-[10px] w-[23px] h-[23px] flex items-center justify-center rounded-full"
                     >
-                      <div className="shadow-lg z-10 w-[7px] h-[7px] bg-[#A29CC0] rounded-full"></div>
+                      <div className="shadow-lg z-10 w-[6px] h-[6px] bg-[#A29CC0] rounded-full"></div>
                     </motion.div>
                   </div>
                 </div>
