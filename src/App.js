@@ -14,7 +14,6 @@ const DURATION = 186;
 
 export default function App() {
   let [playing, setPlaying] = useState(false);
-  let [pressing, setPressing] = useState(false);
   let [currentTime, setCurrentTime] = useState(0);
   let [dragging, setDragging] = useState(false);
 
@@ -23,7 +22,6 @@ export default function App() {
   let x = useTransform(interval, (value) => 50 + Math.cos(value) * 50);
   let backgroundPosition = useMotionTemplate`${x}% ${y}%`;
   let constraintsRef = useRef(null);
-  let constraintsRef2 = useRef(null);
 
   let mins = Math.floor(currentTime / 60);
   let secs = `${currentTime % 60}`.padStart(2, "0");
@@ -66,10 +64,10 @@ export default function App() {
         if (currentTime < DURATION) {
           let newCurrentTimePrecise = currentTimePrecise.get() + 0.01;
           currentTimePrecise.set(newCurrentTimePrecise);
-          let newProgressPrecise = newCurrentTimePrecise / DURATION;
-          let newX =
-            newProgressPrecise * (constraintsRef.current.clientWidth - 20);
-
+          let newX = getXFromProgress({
+            container: constraintsRef.current,
+            progress: currentTimePrecise.get() / DURATION,
+          });
           scrubberX.set(newX);
         }
       }, 10);
@@ -162,40 +160,40 @@ export default function App() {
                   >
                     <div className="absolute inset-0 h-[3px] bg-[#A29CC0] rounded-full"></div>
                   </motion.div>
-                  <div className="absolute inset-0" ref={constraintsRef2}>
-                    <div className="absolute inset-0" ref={constraintsRef}>
-                      <motion.div
-                        drag="x"
-                        dragConstraints={constraintsRef2}
-                        dragControls={dragControls}
-                        dragElastic={0}
-                        dragMomentum={false}
-                        style={{ x: scrubberX }}
-                        animate={{ scale: dragging ? 4.75 : 1 }}
-                        onDrag={(event) => {
-                          let newProgress = getProgress({
-                            container: constraintsRef.current,
-                            event,
-                          });
-                          setCurrentTime(Math.floor(newProgress * DURATION));
-                          currentTimePrecise.set(newProgress * DURATION);
-                        }}
-                        onDragStart={() => {
-                          setDragging(true);
-                        }}
-                        onPointerDown={() => {
-                          setDragging(true);
-                        }}
-                        onPointerUp={() => {
-                          setDragging(false);
-                        }}
-                        onDragEnd={() => {}}
-                        transition={{ type: "tween", duration: 0.15 }}
-                        className="absolute -top-[2px] flex items-center justify-center rounded-full"
-                      >
-                        <div className="shadow-lg z-10 w-[7px] h-[7px] bg-[#A29CC0] rounded-full"></div>
-                      </motion.div>
-                    </div>
+                  <div className="absolute inset-0" ref={constraintsRef}>
+                    <motion.div
+                      drag="x"
+                      dragConstraints={constraintsRef}
+                      dragControls={dragControls}
+                      dragElastic={0}
+                      dragMomentum={false}
+                      style={{ x: scrubberX }}
+                      animate={{ scale: dragging ? 4.75 : 1 }}
+                      onDrag={(event) => {
+                        let newProgress = getProgress({
+                          container: constraintsRef.current,
+                          event,
+                        });
+                        setCurrentTime(Math.floor(newProgress * DURATION));
+                        currentTimePrecise.set(newProgress * DURATION);
+                      }}
+                      onDragStart={() => {
+                        setDragging(true);
+                      }}
+                      onPointerDown={() => {
+                        setDragging(true);
+                      }}
+                      onPointerUp={() => {
+                        setDragging(false);
+                      }}
+                      onDragEnd={() => {
+                        setDragging(false);
+                      }}
+                      transition={{ type: "tween", duration: 0.15 }}
+                      className="absolute -top-[2px] flex items-center justify-center rounded-full"
+                    >
+                      <div className="shadow-lg z-10 w-[7px] h-[7px] bg-[#A29CC0] rounded-full"></div>
+                    </motion.div>
                   </div>
                 </div>
                 <div className="flex justify-between mt-[11px]">
@@ -206,7 +204,7 @@ export default function App() {
                     {timecode}
                   </motion.p>
                   <img
-                    className="h-[11.5px] mt-1 mx-auto"
+                    className="h-[11.5px] mt-1 mx-auto pointer-events-none"
                     src="/dolby.svg"
                     alt=""
                   />
@@ -220,72 +218,25 @@ export default function App() {
               </div>
               {/* Player controls */}
               <div className="mt-6">
-                <div className="flex items-center justify-between px-9">
-                  <button>
-                    <Icons.Skip className="w-10 text-white rotate-180" />
-                  </button>
-                  <motion.button
-                    animate={pressing ? "pressed" : "unpressed"}
-                    onTapStart={() => {
-                      setPressing(true);
-                    }}
-                    onTap={() => {
-                      setPressing(false);
-                      setPlaying(!playing);
-                    }}
-                    className="relative w-20 h-20 p-3 text-white rounded-full"
+                <div className="flex items-center justify-between px-6">
+                  <Button className="w-20 h-20 p-3">
+                    <Icons.Skip className="w-10 h-10 text-white rotate-180" />
+                  </Button>
+
+                  <Button
+                    onClick={() => setPlaying(!playing)}
+                    className="w-20 h-20 p-3"
                   >
-                    <motion.span
-                      variants={{
-                        pressed: {
-                          scale: 0.85,
-                          backgroundColor: "rgba(229 231 235 .25)",
-                          transition: {
-                            type: "spring",
-                            duration: 0.3,
-                            bounce: 0.5,
-                          },
-                        },
-                        unpressed: {
-                          scale: [null, 0.85, 1],
-                          backgroundColor: [
-                            null,
-                            "rgba(229 231 235 .25)",
-                            "rgba(229 231 235 0)",
-                          ],
-                          transition: {
-                            type: "spring",
-                            duration: 0.3,
-                            bounce: 0.5,
-                          },
-                        },
-                      }}
-                      className="absolute inset-0 rounded-full"
-                    ></motion.span>
-                    <motion.span
-                      variants={{
-                        pressed: { scale: 0.85 },
-                        unpressed: {
-                          scale: [null, 0.85, 1],
-                          transition: {
-                            type: "spring",
-                            duration: 0.6,
-                            bounce: 0.5,
-                          },
-                        },
-                      }}
-                      className="block"
-                    >
-                      {playing ? (
-                        <Icons.Pause className="w-full h-full" />
-                      ) : (
-                        <Icons.Play className="w-full h-full" />
-                      )}
-                    </motion.span>
-                  </motion.button>
-                  <button>
-                    <Icons.Skip className="w-10 text-white" />
-                  </button>
+                    {playing ? (
+                      <Icons.Pause className="w-full h-full" />
+                    ) : (
+                      <Icons.Play className="w-full h-full" />
+                    )}
+                  </Button>
+
+                  <Button className="w-20 h-20 p-3">
+                    <Icons.Skip className="w-10 h-10 text-white" />
+                  </Button>
                 </div>
               </div>
               {/* Volume bar */}
@@ -332,4 +283,74 @@ function getProgress({ container, event }) {
     draggedProgress > 1 ? 1 : draggedProgress < 0 ? 0 : draggedProgress;
 
   return newProgress;
+}
+
+function getXFromProgress({ container, progress }) {
+  let { width } = container.getBoundingClientRect();
+  let newProgressPrecise = progress;
+  let newX = newProgressPrecise * (width - 3);
+
+  return newX;
+}
+
+function Button({ children, onClick = () => {}, className }) {
+  let [pressing, setPressing] = useState(false);
+
+  return (
+    <motion.button
+      animate={pressing ? "pressed" : "unpressed"}
+      onTapStart={() => {
+        setPressing(true);
+      }}
+      onTap={() => {
+        setPressing(false);
+        onClick();
+      }}
+      className={`flex items-center justify-center relative text-white rounded-full ${className}`}
+    >
+      <motion.span
+        variants={{
+          pressed: {
+            scale: 0.85,
+            backgroundColor: "rgba(229 231 235 .25)",
+            transition: {
+              type: "spring",
+              duration: 0.3,
+              bounce: 0.5,
+            },
+          },
+          unpressed: {
+            scale: [null, 0.85, 1],
+            backgroundColor: [
+              null,
+              "rgba(229 231 235 .25)",
+              "rgba(229 231 235 0)",
+            ],
+            transition: {
+              type: "spring",
+              duration: 0.3,
+              bounce: 0.5,
+            },
+          },
+        }}
+        className="absolute inset-0 rounded-full"
+      ></motion.span>
+      <motion.span
+        variants={{
+          pressed: { scale: 0.85 },
+          unpressed: {
+            scale: [null, 0.85, 1],
+            transition: {
+              type: "spring",
+              duration: 0.6,
+              bounce: 0.5,
+            },
+          },
+        }}
+        className="block"
+      >
+        {children}
+      </motion.span>
+    </motion.button>
+  );
 }
