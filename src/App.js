@@ -162,7 +162,7 @@ export default function App() {
                     <div className="absolute inset-0 h-[3px] bg-[#A29CC0] rounded-full"></div>
                   </motion.div>
                   <div className="absolute inset-0" ref={constraintsRef}>
-                    <motion.div
+                    <motion.button
                       drag="x"
                       dragConstraints={constraintsRef}
                       dragControls={dragControls}
@@ -191,10 +191,10 @@ export default function App() {
                         setDragging(false);
                       }}
                       transition={{ type: "tween", duration: 0.15 }}
-                      className="absolute -top-[2px] flex items-center justify-center rounded-full"
+                      className="absolute -top-[2px] flex items-center justify-center rounded-full cursor-grab active:cursor-grabbing"
                     >
                       <div className="shadow-lg z-10 w-[7px] h-[7px] bg-[#A29CC0] rounded-full"></div>
-                    </motion.div>
+                    </motion.button>
                   </div>
                 </div>
                 <div className="flex justify-between mt-[11px]">
@@ -217,11 +217,12 @@ export default function App() {
                   </motion.p>
                 </div>
               </div>
+
               {/* Player controls */}
               <div className="mt-6">
-                <div className="flex items-center justify-between px-6">
+                <div className="flex items-center justify-between px-4">
                   <Button className="w-20 h-20 p-3">
-                    <Icons.Skip className="w-10 h-10 text-white rotate-180" />
+                    <Icons.Skip className="w-[42px] h-[42px] text-white rotate-180" />
                   </Button>
 
                   <Button
@@ -236,37 +237,18 @@ export default function App() {
                   </Button>
 
                   <Button className="w-20 h-20 p-3">
-                    <Icons.Skip className="w-10 h-10 text-white" />
+                    <Icons.Skip className="w-[42px] h-[42px] text-white" />
                   </Button>
                 </div>
               </div>
-              {/* Volume bar */}
-              <div className="flex items-center justify-between w-full mt-9">
-                <Icons.VolumeMute className="h-5 text-[#A29CC0]" />
-                <div className="relative flex-1 mx-3">
-                  <div className="w-full h-[3px] bg-[#5A526F] rounded-full"></div>
-                  <div className="absolute inset-0 flex items-center w-8">
-                    <div className="w-full h-[3px] bg-[#A29CC0] rounded-full"></div>
-                    <div className="absolute right-0 w-5 h-5 bg-white rounded-full left-8"></div>
-                  </div>
-                </div>
-                <Icons.VolumeHigh className="h-5 text-[#A29CC0]" />
-              </div>
-              {/* Icon bar */}
-              <div className="flex px-[46px] mt-6 justify-between">
-                <button className="text-[#A29CC0] active:text-white p-1">
-                  <Icons.Lyrics className="h-[21px]" />
-                </button>
-                <button className="text-[#A29CC0] active:text-white p-1">
-                  <Icons.AirPlay className="h-[21px]" />
-                </button>
-                <button className="text-[#A29CC0] active:text-white p-1">
-                  <Icons.List className="h-[21px]" />
-                </button>
-              </div>
+
+              <Volume />
+
+              <IconBar />
             </div>
           </motion.div>
         </AnimatePresence>
+
         {/* <div className="mt-20 text-center">
           <p className="text-sm text-gray-500">
             View the source: <br className="md:hidden" />
@@ -359,5 +341,69 @@ function Button({ children, onClick = () => {}, className }) {
         {children}
       </motion.span>
     </motion.button>
+  );
+}
+
+function Volume() {
+  let dragControls = useDragControls();
+  let constraintsRef = useRef();
+  let volume = useMotionValue(0);
+  let width = useMotionTemplate`${volume}%`;
+  // let newVolume = getXFromProgress({
+  //   container: constraintsRef.current,
+  //   progress: volume,
+  // });
+  let scrubberX = useMotionValue(0);
+
+  return (
+    <div className="flex items-center justify-between w-full mt-9">
+      <Icons.VolumeMute className="h-5 text-[#A29CC0]" />
+
+      <div className="relative flex-1 mx-3">
+        <div
+          ref={constraintsRef}
+          className="w-full h-[3px] bg-[#5A526F] rounded-full"
+        ></div>
+        <div className="absolute inset-0 flex items-center w-full">
+          <motion.div
+            style={{ width }}
+            className="w-full h-[3px] bg-[#A29CC0] rounded-full"
+          ></motion.div>
+          <motion.button
+            style={{ x: scrubberX }}
+            drag="x"
+            dragConstraints={constraintsRef}
+            dragElastic={0}
+            dragMomentum={false}
+            onDrag={(event) => {
+              let newVolume = getProgress({
+                container: constraintsRef.current,
+                event,
+              });
+              volume.set(newVolume * 100);
+            }}
+            className="absolute w-5 h-5 bg-white rounded-full cursor-grab active:cursor-grabbing"
+          ></motion.button>
+        </div>
+      </div>
+
+      <Icons.VolumeHigh className="h-5 text-[#A29CC0]" />
+    </div>
+  );
+}
+
+function IconBar() {
+  return (
+    <div className="flex px-[46px] mt-6 justify-between">
+      <button className="text-[#A29CC0] active:text-white p-1">
+        <Icons.Lyrics className="h-[21px]" />
+      </button>
+      <button className="text-[#A29CC0] active:text-white p-1">
+        <Icons.AirPlay className="h-[21px]" />
+      </button>
+      <button className="text-[#A29CC0] active:text-white p-1">
+        <Icons.List className="h-[21px]" />
+      </button>
+    </div>
   );
 }
