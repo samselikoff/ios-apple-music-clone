@@ -62,8 +62,7 @@ export default function App() {
 
       let interval2Id = setInterval(() => {
         if (currentTime < DURATION) {
-          let newCurrentTimePrecise = currentTime + 0.01;
-          // let newCurrentTimePrecise = currentTimePrecise.get() + 0.01;
+          let newCurrentTimePrecise = currentTimePrecise.get() + 0.01;
           currentTimePrecise.set(newCurrentTimePrecise);
           let newProgressPrecise = newCurrentTimePrecise / DURATION;
           let newX =
