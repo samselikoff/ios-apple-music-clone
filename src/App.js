@@ -12,7 +12,7 @@ import * as Icons from "./Icons";
 
 const DURATION = 186;
 
-export default function PodcastScaleEffect() {
+export default function App() {
   let [playing, setPlaying] = useState(false);
   let [pressing, setPressing] = useState(false);
   let [currentTime, setCurrentTime] = useState(0);
