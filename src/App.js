@@ -51,20 +51,9 @@ export default function App() {
             initial={false}
             className="relative z-10 block w-full shadow-2xl rounded-xl aspect-square"
           ></motion.img>
+
           <div className="mt-[45px] w-full px-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xl font-medium leading-tight text-white truncate">
-                  You Right
-                </p>
-                <p className=" text-xl leading-tight truncate text-[#A49FC3]/90">
-                  Doja Cat & The Weeknd
-                </p>
-              </div>
-              <button className="flex items-center justify-center rounded-full w-7 h-7 bg-white/10 active:bg-white/20">
-                <Icons.Dots className="w-4 h-4 text-white" />
-              </button>
-            </div>
+            <Title />
 
             <ProgressBar
               playing={playing}
@@ -108,7 +97,7 @@ function AnimatedGradient() {
   useEffect(() => {
     let controls = animate(interval, [0, Math.PI * 2], {
       repeat: Infinity,
-      duration: 20,
+      duration: 24,
       ease: "linear",
     });
 
@@ -125,12 +114,30 @@ function AnimatedGradient() {
           scale: 1.75,
           backgroundColor: "#322840",
           backgroundImage: `
-            radial-gradient(at 21% 33%, #242549 0px, transparent 50%),
-            radial-gradient(at 79% 32%, #35245e 0px, transparent 50%),
-            radial-gradient(at 26% 83%, #0e2452 0px, transparent 50%)`,
+            radial-gradient(at 21% 33%, #1f2460 0px, transparent 50%),
+            radial-gradient(at 79% 32%, #2d1e51 0px, transparent 50%),
+            radial-gradient(at 26% 83%, #0f2451 0px, transparent 50%)`,
         }}
         className="absolute inset-0"
       ></motion.div>
+    </div>
+  );
+}
+
+function Title() {
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xl font-medium leading-tight text-white truncate">
+          You Right
+        </p>
+        <p className=" text-xl leading-tight truncate text-[#A49FC3]/90">
+          Doja Cat & The Weeknd
+        </p>
+      </div>
+      <button className="flex items-center justify-center rounded-full w-7 h-7 bg-white/10 active:bg-white/20">
+        <Icons.Dots className="w-4 h-4 text-white" />
+      </button>
     </div>
   );
 }
