@@ -42,15 +42,15 @@ export default function PodcastScaleEffect() {
   let progressPreciseWidth = useMotionTemplate`${progressPrecise}%`;
   let scrubberX = useMotionValue(0);
 
-  useEffect(() => {
-    let controls = animate(interval, [0, Math.PI * 2], {
-      repeat: Infinity,
-      duration: 30,
-      ease: "linear",
-    });
+  // useEffect(() => {
+  //   let controls = animate(interval, [0, Math.PI * 2], {
+  //     repeat: Infinity,
+  //     duration: 30,
+  //     ease: "linear",
+  //   });
 
-    return controls.stop;
-  }, [interval]);
+  //   return controls.stop;
+  // }, [interval]);
 
   useEffect(() => {
     if (playing) {
@@ -302,7 +302,7 @@ export default function PodcastScaleEffect() {
 
                   {/* Volume bar */}
                   <div className="flex items-center justify-between w-full mt-9">
-                    <Icons.VolumeMute className="h-5 text-white/50" />
+                    <Icons.VolumeMute className="h-5 text-[#A29CC0]" />
                     <div className="relative flex-1 mx-3">
                       <div className="w-full h-[3px] bg-[#5A526F] rounded-full"></div>
                       <div className="absolute inset-0 flex items-center w-8">
@@ -310,7 +310,14 @@ export default function PodcastScaleEffect() {
                         <div className="absolute right-0 w-5 h-5 bg-white rounded-full left-8"></div>
                       </div>
                     </div>
-                    <Icons.VolumeHigh className="h-5 text-white/50" />
+                    <Icons.VolumeHigh className="h-5 text-[#A29CC0]" />
+                  </div>
+
+                  {/* Icon bar */}
+                  <div className="flex px-[50px] mt-7 justify-between">
+                    <Icons.Lyrics className="h-[21px] text-[#A29CC0]" />
+                    <Icons.AirPlay className="h-[21px] text-[#A29CC0]" />
+                    <Icons.List className="h-[21px] text-[#A29CC0]" />
                   </div>
                 </div>
               </motion.div>
