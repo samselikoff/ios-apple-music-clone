@@ -81,7 +81,7 @@ export default function App() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="max-w-[390px] flex mx-auto max-h-[844px] flex-col h-screen">
+      <div className="max-w-[390px] w-full flex mx-auto max-h-[844px] flex-col h-screen">
         <AnimatePresence initial={false}>
           <motion.div
             style={{
@@ -134,7 +134,7 @@ export default function App() {
                     Doja Cat & The Weeknd
                   </p>
                 </div>
-                <button className="flex items-center justify-center rounded-full w-7 h-7 bg-white/10">
+                <button className="flex items-center justify-center rounded-full w-7 h-7 bg-white/10 active:bg-white/20">
                   <Icons.Dots className="w-4 h-4 text-white" />
                 </button>
               </div>
@@ -148,6 +148,7 @@ export default function App() {
                       container: constraintsRef.current,
                       event,
                     });
+                    setDragging(true);
                     dragControls.start(event, { snapToCursor: true });
                     setCurrentTime(Math.floor(newProgress * DURATION));
                     currentTimePrecise.set(newProgress * DURATION);
@@ -252,10 +253,16 @@ export default function App() {
                 <Icons.VolumeHigh className="h-5 text-[#A29CC0]" />
               </div>
               {/* Icon bar */}
-              <div className="flex px-[50px] mt-7 justify-between">
-                <Icons.Lyrics className="h-[21px] text-[#A29CC0]" />
-                <Icons.AirPlay className="h-[21px] text-[#A29CC0]" />
-                <Icons.List className="h-[21px] text-[#A29CC0]" />
+              <div className="flex px-[46px] mt-6 justify-between">
+                <button className="text-[#A29CC0] active:text-white p-1">
+                  <Icons.Lyrics className="h-[21px]" />
+                </button>
+                <button className="text-[#A29CC0] active:text-white p-1">
+                  <Icons.AirPlay className="h-[21px]" />
+                </button>
+                <button className="text-[#A29CC0] active:text-white p-1">
+                  <Icons.List className="h-[21px]" />
+                </button>
               </div>
             </div>
           </motion.div>
