@@ -16,12 +16,14 @@ export default function App() {
   let [playing, setPlaying] = useState(false);
   let [pressing, setPressing] = useState(false);
   let [currentTime, setCurrentTime] = useState(0);
+  let [dragging, setDragging] = useState(false);
 
   let interval = useMotionValue(0);
   let y = useTransform(interval, (value) => 50 + Math.sin(value) * 50);
   let x = useTransform(interval, (value) => 50 + Math.cos(value) * 50);
   let backgroundPosition = useMotionTemplate`${x}% ${y}%`;
   let constraintsRef = useRef(null);
+  let constraintsRef2 = useRef(null);
 
   let mins = Math.floor(currentTime / 60);
   let secs = `${currentTime % 60}`.padStart(2, "0");
@@ -160,37 +162,46 @@ export default function App() {
                   >
                     <div className="absolute inset-0 h-[3px] bg-[#A29CC0] rounded-full"></div>
                   </motion.div>
-                  <div
-                    className="absolute inset-0 -mx-2.5"
-                    ref={constraintsRef}
-                  >
-                    <motion.div
-                      drag="x"
-                      dragConstraints={constraintsRef}
-                      dragControls={dragControls}
-                      dragElastic={0}
-                      dragMomentum={false}
-                      style={{ x: scrubberX }}
-                      onDrag={(event) => {
-                        let newProgress = getProgress({
-                          container: constraintsRef.current,
-                          event,
-                        });
-                        setCurrentTime(Math.floor(newProgress * DURATION));
-                        currentTimePrecise.set(newProgress * DURATION);
-                      }}
-                      whileTap={{ scale: 4.75 }}
-                      transition={{ type: "tween", duration: 0.15 }}
-                      className="absolute -top-[10px] w-[23px] h-[23px] flex items-center justify-center rounded-full"
-                    >
-                      <div className="shadow-lg z-10 w-[6px] h-[6px] bg-[#A29CC0] rounded-full"></div>
-                    </motion.div>
+                  <div className="absolute inset-0" ref={constraintsRef2}>
+                    <div className="absolute inset-0" ref={constraintsRef}>
+                      <motion.div
+                        drag="x"
+                        dragConstraints={constraintsRef2}
+                        dragControls={dragControls}
+                        dragElastic={0}
+                        dragMomentum={false}
+                        style={{ x: scrubberX }}
+                        animate={{ scale: dragging ? 4.75 : 1 }}
+                        onDrag={(event) => {
+                          let newProgress = getProgress({
+                            container: constraintsRef.current,
+                            event,
+                          });
+                          setCurrentTime(Math.floor(newProgress * DURATION));
+                          currentTimePrecise.set(newProgress * DURATION);
+                        }}
+                        onDragStart={() => {
+                          setDragging(true);
+                        }}
+                        onPointerDown={() => {
+                          setDragging(true);
+                        }}
+                        onPointerUp={() => {
+                          setDragging(false);
+                        }}
+                        onDragEnd={() => {}}
+                        transition={{ type: "tween", duration: 0.15 }}
+                        className="absolute -top-[2px] flex items-center justify-center rounded-full"
+                      >
+                        <div className="shadow-lg z-10 w-[7px] h-[7px] bg-[#A29CC0] rounded-full"></div>
+                      </motion.div>
+                    </div>
                   </div>
                 </div>
                 <div className="flex justify-between mt-[11px]">
                   <motion.p
                     className="absolute left-0 text-[11px] font-medium tracking-wide text-white/20 tabular-nums"
-                    animate={{ y: progress < 15 ? 15 : 0 }}
+                    animate={{ y: dragging && progress < 15 ? 15 : 0 }}
                   >
                     {timecode}
                   </motion.p>
@@ -201,7 +212,7 @@ export default function App() {
                   />
                   <motion.p
                     className="absolute right-0 text-[11px] font-medium tracking-wide text-white/20 tabular-nums"
-                    animate={{ y: progress > 85 ? 15 : 0 }}
+                    animate={{ y: dragging && progress > 85 ? 15 : 0 }}
                   >
                     -{timecodeRemaining}
                   </motion.p>
@@ -316,9 +327,9 @@ export default function App() {
 
 function getProgress({ container, event }) {
   let { x, width } = container.getBoundingClientRect();
-
   let draggedProgress = (event.clientX - x) / width;
   let newProgress =
     draggedProgress > 1 ? 1 : draggedProgress < 0 ? 0 : draggedProgress;
+
   return newProgress;
 }
