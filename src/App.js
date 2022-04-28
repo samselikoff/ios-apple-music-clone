@@ -61,13 +61,12 @@ export default function PodcastScaleEffect() {
 
       let interval2Id = setInterval(() => {
         if (currentTime < DURATION) {
-          let newCurrentTimePrecise = currentTimePrecise.get() + 0.01;
+          let newCurrentTimePrecise = currentTime + 0.01;
+          // let newCurrentTimePrecise = currentTimePrecise.get() + 0.01;
           currentTimePrecise.set(newCurrentTimePrecise);
           let newProgressPrecise = newCurrentTimePrecise / DURATION;
-          // // 24 to 355, magic numbers need to derive
           let newX =
-            newProgressPrecise * (constraintsRef.current.clientWidth - 10);
-          // console.log(newX);
+            newProgressPrecise * (constraintsRef.current.clientWidth - 20);
 
           scrubberX.set(newX);
         }
@@ -152,7 +151,18 @@ export default function PodcastScaleEffect() {
                     <div
                       className="relative"
                       onPointerDown={(event) => {
+                        let draggedProgress =
+                          (event.clientX - 32) /
+                          (constraintsRef.current.clientWidth - 20);
+                        let newProgress =
+                          draggedProgress > 1
+                            ? 1
+                            : draggedProgress < 0
+                            ? 0
+                            : draggedProgress;
                         dragControls.start(event, { snapToCursor: true });
+                        setCurrentTime(Math.floor(newProgress * DURATION));
+                        currentTimePrecise.set(newProgress * DURATION);
                       }}
                     >
                       <div className="w-full h-[3px] bg-[#5A526F] rounded-full"></div>
