@@ -347,13 +347,17 @@ function Button({ children, onClick = () => {}, className }) {
 function Volume() {
   let dragControls = useDragControls();
   let constraintsRef = useRef();
-  let volume = useMotionValue(0);
+  let volume = useMotionValue(50);
   let width = useMotionTemplate`${volume}%`;
-  // let newVolume = getXFromProgress({
-  //   container: constraintsRef.current,
-  //   progress: volume,
-  // });
   let scrubberX = useMotionValue(0);
+
+  useEffect(() => {
+    let initialVolume = getXFromProgress({
+      container: constraintsRef.current,
+      progress: volume.get() / 100,
+    });
+    scrubberX.set(initialVolume);
+  }, [scrubberX, volume]);
 
   return (
     <div className="flex items-center justify-between w-full mt-9">
@@ -364,7 +368,17 @@ function Volume() {
           ref={constraintsRef}
           className="w-full h-[3px] bg-[#5A526F] rounded-full"
         ></div>
-        <div className="absolute inset-0 flex items-center w-full">
+        <div
+          className="absolute inset-0 flex items-center w-full"
+          onPointerDown={(event) => {
+            let newVolume = getProgress({
+              container: constraintsRef.current,
+              event,
+            });
+            dragControls.start(event, { snapToCursor: true });
+            volume.set(newVolume * 100);
+          }}
+        >
           <motion.div
             style={{ width }}
             className="w-full h-[3px] bg-[#A29CC0] rounded-full"
@@ -373,6 +387,7 @@ function Volume() {
             style={{ x: scrubberX }}
             drag="x"
             dragConstraints={constraintsRef}
+            dragControls={dragControls}
             dragElastic={0}
             dragMomentum={false}
             onDrag={(event) => {
@@ -382,7 +397,7 @@ function Volume() {
               });
               volume.set(newVolume * 100);
             }}
-            className="absolute w-5 h-5 bg-white rounded-full cursor-grab active:cursor-grabbing"
+            className="absolute w-5 h-5 -ml-[5px] bg-white rounded-full cursor-grab active:cursor-grabbing"
           ></motion.button>
         </div>
       </div>
