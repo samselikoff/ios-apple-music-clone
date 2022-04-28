@@ -39,6 +39,7 @@ export default function PodcastScaleEffect() {
     (v) => (v / DURATION) * 100
   );
   let progressPreciseWidth = useMotionTemplate`${progressPrecise}%`;
+  let scrubberX = useMotionValue(0);
 
   // useEffect(() => {
   //   let controls = animate(interval, [0, Math.PI * 2], {
@@ -60,7 +61,11 @@ export default function PodcastScaleEffect() {
 
       let interval2Id = setInterval(() => {
         if (currentTime < DURATION) {
-          currentTimePrecise.set(currentTimePrecise.get() + 0.01);
+          let newCurrentTimePrecise = currentTimePrecise.get() + 0.01;
+          currentTimePrecise.set(newCurrentTimePrecise);
+          let newProgressPrecise = newCurrentTimePrecise / DURATION;
+          // // 24 to 355, magic numbers need to derive
+          scrubberX.set(newProgressPrecise * 326 - 1);
         }
       }, 10);
 
@@ -69,7 +74,7 @@ export default function PodcastScaleEffect() {
         clearInterval(interval2Id);
       };
     }
-  }, [playing, currentTime, currentTimePrecise]);
+  }, [playing, currentTime, currentTimePrecise, scrubberX]);
 
   return (
     <div className="">
@@ -163,6 +168,7 @@ export default function PodcastScaleEffect() {
                           dragControls={dragControls}
                           dragElastic={0}
                           dragMomentum={false}
+                          style={{ x: scrubberX }}
                           onDrag={(event, info) => {
                             // 32 and 20 are adjusting for margins
                             let draggedProgress =
@@ -222,29 +228,9 @@ export default function PodcastScaleEffect() {
                           setPressing(false);
                           setPlaying(!playing);
                         }}
-                        // variants={{
-                        //   pressed: {
-                        //     // scale: 0.85,
-                        //     // backgroundColor: "rgba(229 231 235 .25)",
-                        //   },
-                        //   unpressed: {
-                        //     // scale: [null, 0.85, 1],
-                        //     // backgroundColor: [
-                        //     //   null,
-                        //     //   "rgba(229 231 235 .25)",
-                        //     //   "rgba(229 231 235 0)",
-                        //     // ],
-                        //   },
-                        // }}
-                        // transition={{
-                        //   type: "spring",
-                        //   duration: 0.3,
-                        //   bounce: 0.5,
-                        // }}
                         className="relative w-20 h-20 p-3 text-white rounded-full"
                       >
                         <motion.span
-                          // animate={pressing ? "pressed" : "unpressed"}
                           variants={{
                             pressed: {
                               scale: 0.85,
