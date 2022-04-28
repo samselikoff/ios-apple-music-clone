@@ -138,20 +138,16 @@ export default function App() {
                   <Icons.Dots className="w-4 h-4 text-white" />
                 </button>
               </div>
+
               {/* Progress bar */}
               <div className="relative w-full mt-[25px]">
                 <div
                   className="relative"
                   onPointerDown={(event) => {
-                    let draggedProgress =
-                      (event.clientX - 32) /
-                      (constraintsRef.current.clientWidth - 20);
-                    let newProgress =
-                      draggedProgress > 1
-                        ? 1
-                        : draggedProgress < 0
-                        ? 0
-                        : draggedProgress;
+                    let newProgress = getProgress({
+                      container: constraintsRef.current,
+                      event,
+                    });
                     dragControls.start(event, { snapToCursor: true });
                     setCurrentTime(Math.floor(newProgress * DURATION));
                     currentTimePrecise.set(newProgress * DURATION);
@@ -175,17 +171,11 @@ export default function App() {
                       dragElastic={0}
                       dragMomentum={false}
                       style={{ x: scrubberX }}
-                      onDrag={(event, info) => {
-                        // 32 and 20 are adjusting for margins
-                        let draggedProgress =
-                          (info.point.x - 32) /
-                          (constraintsRef.current.clientWidth - 20);
-                        let newProgress =
-                          draggedProgress > 1
-                            ? 1
-                            : draggedProgress < 0
-                            ? 0
-                            : draggedProgress;
+                      onDrag={(event) => {
+                        let newProgress = getProgress({
+                          container: constraintsRef.current,
+                          event,
+                        });
                         setCurrentTime(Math.floor(newProgress * DURATION));
                         currentTimePrecise.set(newProgress * DURATION);
                       }}
@@ -322,4 +312,13 @@ export default function App() {
       </div>
     </div>
   );
+}
+
+function getProgress({ container, event }) {
+  let { x, width } = container.getBoundingClientRect();
+
+  let draggedProgress = (event.clientX - x) / width;
+  let newProgress =
+    draggedProgress > 1 ? 1 : draggedProgress < 0 ? 0 : draggedProgress;
+  return newProgress;
 }
