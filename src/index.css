@@ -5,6 +5,9 @@
 button {
   -webkit-tap-highlight-color: transparent;
 }
+button:focus {
+  outline: none;
+}
 
 .mesh {
   background-color: #322840;

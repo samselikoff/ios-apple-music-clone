@@ -41,15 +41,15 @@ export default function PodcastScaleEffect() {
   let progressPreciseWidth = useMotionTemplate`${progressPrecise}%`;
   let scrubberX = useMotionValue(0);
 
-  // useEffect(() => {
-  //   let controls = animate(interval, [0, Math.PI * 2], {
-  //     repeat: Infinity,
-  //     duration: 30,
-  //     ease: "linear",
-  //   });
+  useEffect(() => {
+    let controls = animate(interval, [0, Math.PI * 2], {
+      repeat: Infinity,
+      duration: 30,
+      ease: "linear",
+    });
 
-  //   return controls.stop;
-  // }, [interval]);
+    return controls.stop;
+  }, [interval]);
 
   useEffect(() => {
     if (playing) {
@@ -65,7 +65,11 @@ export default function PodcastScaleEffect() {
           currentTimePrecise.set(newCurrentTimePrecise);
           let newProgressPrecise = newCurrentTimePrecise / DURATION;
           // // 24 to 355, magic numbers need to derive
-          scrubberX.set(newProgressPrecise * 326 - 1);
+          let newX =
+            newProgressPrecise * (constraintsRef.current.clientWidth - 10);
+          // console.log(newX);
+
+          scrubberX.set(newX);
         }
       }, 10);
 
@@ -289,9 +293,9 @@ export default function PodcastScaleEffect() {
                   <div className="flex items-center justify-between w-full mt-9">
                     <VolumeMuteIcon className="h-5 text-white/50" />
                     <div className="relative flex-1 mx-3">
-                      <div className="w-full h-[3px] bg-white/20 rounded-full"></div>
+                      <div className="w-full h-[3px] bg-[#5A526F] rounded-full"></div>
                       <div className="absolute inset-0 flex items-center w-8">
-                        <div className="w-full h-[3px] bg-[#89848E] rounded-full"></div>
+                        <div className="w-full h-[3px] bg-[#A29CC0] rounded-full"></div>
                         <div className="absolute right-0 w-5 h-5 bg-white rounded-full left-8"></div>
                       </div>
                     </div>
