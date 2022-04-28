@@ -63,7 +63,7 @@ export default function App() {
               onPlayPause={() => setPlaying(!playing)}
             />
 
-            {/* <Volume /> */}
+            <Volume />
 
             <IconBar />
           </div>
@@ -318,13 +318,15 @@ function PlayerControls({ playing, onPlayPause }) {
 function Volume() {
   let dragControls = useDragControls();
   let constraintsRef = useRef();
+  let scrubberRef = useRef();
+  let fullBarRef = useRef();
   let volume = useMotionValue(50);
   let width = useMotionTemplate`${volume}%`;
   let scrubberX = useMotionValue(0);
 
   useEffect(() => {
     let initialVolume = getXFromProgress({
-      container: constraintsRef.current,
+      container: fullBarRef.current,
       progress: volume.get() / 100,
     });
     scrubberX.set(initialVolume);
@@ -337,14 +339,18 @@ function Volume() {
       <div className="relative flex-1 mx-3">
         <div
           ref={constraintsRef}
+          className="absolute top-0 -left-2 -right-2 h-[3px]"
+        ></div>
+        <div
+          ref={fullBarRef}
           className="w-full h-[3px] bg-[#5A526F] rounded-full"
         ></div>
         <div
           className="absolute inset-0 flex items-center w-full"
           onPointerDown={(event) => {
             let newVolume = getProgress({
-              container: constraintsRef.current,
-              event,
+              containerRef: fullBarRef,
+              x: event.clientX,
             });
             dragControls.start(event, { snapToCursor: true });
             volume.set(newVolume * 100);
@@ -355,6 +361,7 @@ function Volume() {
             className="w-full h-[3px] bg-[#A29CC0] rounded-full"
           ></motion.div>
           <motion.button
+            ref={scrubberRef}
             style={{ x: scrubberX }}
             drag="x"
             dragConstraints={constraintsRef}
@@ -362,9 +369,12 @@ function Volume() {
             dragElastic={0}
             dragMomentum={false}
             onDrag={(event) => {
+              let scrubberBounds = scrubberRef.current.getBoundingClientRect();
+              let middleOfScrubber =
+                scrubberBounds.x + scrubberBounds.width / 2;
               let newVolume = getProgress({
-                container: constraintsRef.current,
-                event,
+                containerRef: fullBarRef,
+                x: middleOfScrubber,
               });
               volume.set(newVolume * 100);
             }}
