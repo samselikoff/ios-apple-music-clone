@@ -1,13 +1,12 @@
 import {
   animate,
-  AnimatePresence,
   motion,
   useDragControls,
   useMotionTemplate,
   useMotionValue,
   useTransform,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import * as Icons from "./Icons";
 
 const DURATION = 186;
@@ -18,7 +17,7 @@ export default function App() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="max-w-[390px] w-full flex mx-auto max-h-[844px] flex-col h-screen relative overflow-hidden md:rounded-xl shadow-2xl">
+      <div className="max-w-[390px] w-full flex mx-auto max-h-[844px] flex-col h-screen relative shadow-2xl overflow-hidden rounded-xl">
         <div className="flex flex-col items-center flex-1 w-full px-6 shadow-2xl">
           <Header />
 
@@ -48,7 +47,6 @@ export default function App() {
               },
             }}
             initial={false}
-            className="relative z-10 block w-full shadow-2xl rounded-xl aspect-square"
           />
 
           <div className="mt-[45px] w-full px-2">
@@ -87,6 +85,25 @@ export default function App() {
   );
 }
 
+function Header() {
+  return (
+    <div className="w-full pt-3 mb-8">
+      <div className="flex items-center justify-between pl-3 pr-1 ">
+        <div className="flex items-center space-x-1.5">
+          <span className="font-semibold text-white text-[17px]">6:18</span>
+          <Icons.Location className="w-[13px] text-white" />
+        </div>
+        <div className="flex items-center space-x-1.5">
+          <Icons.Signal className="h-[18px] text-white" />
+          <Icons.Wifi className="h-[22px] text-white" />
+          <Icons.Battery className="h-[24px] text-white" />
+        </div>
+      </div>
+      <div className="mt-4 w-9 h-[5px] mx-auto rounded-full bg-white/20"></div>
+    </div>
+  );
+}
+
 function AnimatedGradient() {
   let gradientRef = useRef();
   let interval = useMotionValue(0);
@@ -104,7 +121,7 @@ function AnimatedGradient() {
   }, [interval]);
 
   return (
-    <div className="absolute inset-0 z-[-1] overflow-hidden">
+    <div className="absolute inset-0 z-[-1] overflow-hidden rounded-xl">
       <motion.div
         ref={gradientRef}
         style={{
@@ -163,32 +180,28 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
   let timecodeRemaining = `${minsRemaining}:${secsRemaining}`;
   let progress = (currentTime / DURATION) * 100;
 
-  useEffect(() => {
-    if (playing) {
-      let updateCurrentTime = setInterval(() => {
-        if (currentTime < DURATION) {
-          setCurrentTime((t) => t + 1);
-        }
-      }, 1000);
+  useInterval(
+    () => {
+      if (currentTime < DURATION) {
+        setCurrentTime((t) => t + 1);
+      }
+    },
+    playing ? 1000 : null
+  );
 
-      let updateCurrentTimePrecise = setInterval(() => {
-        if (currentTime < DURATION) {
-          let newCurrentTimePrecise = currentTimePrecise.get() + 0.01;
-          currentTimePrecise.set(newCurrentTimePrecise);
-          let newX = getXFromProgress({
-            containerRef: fullBarRef,
-            progress: currentTimePrecise.get() / DURATION,
-          });
-          scrubberX.set(newX);
-        }
-      }, 10);
-
-      return () => {
-        clearInterval(updateCurrentTime);
-        clearInterval(updateCurrentTimePrecise);
-      };
-    }
-  }, [playing, currentTime, currentTimePrecise, scrubberX, setCurrentTime]);
+  useInterval(
+    () => {
+      if (currentTime < DURATION) {
+        currentTimePrecise.set(currentTimePrecise.get() + 0.01);
+        let newX = getXFromProgress({
+          containerRef: fullBarRef,
+          progress: currentTimePrecise.get() / DURATION,
+        });
+        scrubberX.set(newX);
+      }
+    },
+    playing ? 10 : null
+  );
 
   return (
     <div className="relative w-full mt-[25px]">
@@ -254,6 +267,7 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
             <motion.div
               animate={{ scale: dragging ? 1 : 0.25 }}
               transition={{ type: "tween", duration: 0.15 }}
+              initial={false}
               className="w-[33px] h-[33px] bg-[#A29CC0] rounded-full -mt-[15px]"
             ></motion.div>
           </motion.button>
@@ -262,7 +276,7 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
       <div className="flex justify-between mt-[11px]">
         <motion.p
           className="absolute left-0 text-[11px] font-medium tracking-wide text-white/20 tabular-nums"
-          animate={{ y: dragging && progress < 13 ? 15 : 0 }}
+          animate={{ y: dragging && progress < 12 ? 15 : 0 }}
         >
           {timecode}
         </motion.p>
@@ -315,7 +329,7 @@ function Volume() {
   let width = useMotionTemplate`${volume}%`;
   let scrubberX = useMotionValue(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let initialVolume = getXFromProgress({
       containerRef: fullBarRef,
       progress: volume.get() / 100,
@@ -395,6 +409,48 @@ function IconBar() {
   );
 }
 
+function Button({ children, onClick = () => {}, className }) {
+  let [pressing, setPressing] = useState(false);
+
+  return (
+    <motion.button
+      onTapStart={() => {
+        setPressing(true);
+      }}
+      onTap={() => {
+        setPressing(false);
+        onClick();
+      }}
+      initial={false}
+      animate={pressing ? "pressed" : "unpressed"}
+      variants={{
+        pressed: {
+          scale: 0.85,
+          backgroundColor: "rgba(229 231 235 .25)",
+          opacity: 0.7,
+        },
+        unpressed: {
+          scale: [null, 0.85, 1],
+          opacity: 1,
+          backgroundColor: [
+            null,
+            "rgba(229 231 235 .25)",
+            "rgba(229 231 235 0)",
+          ],
+        },
+      }}
+      transition={{
+        type: "spring",
+        duration: 0.3,
+        bounce: 0.5,
+      }}
+      className={`flex items-center justify-center relative text-white rounded-full ${className}`}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
 function getProgressFromX({ x, containerRef }) {
   let bounds = containerRef.current.getBoundingClientRect();
   let progress = (x - bounds.x) / bounds.width;
@@ -408,66 +464,22 @@ function getXFromProgress({ progress, containerRef }) {
   return progress * bounds.width;
 }
 
-function Button({ children, onClick = () => {}, className }) {
-  let [pressing, setPressing] = useState(false);
-
-  return (
-    <AnimatePresence initial={false}>
-      <motion.button
-        animate={pressing ? "pressed" : "unpressed"}
-        onTapStart={() => {
-          setPressing(true);
-        }}
-        onTap={() => {
-          setPressing(false);
-          onClick();
-        }}
-        variants={{
-          pressed: {
-            scale: 0.85,
-            backgroundColor: "rgba(229 231 235 .25)",
-          },
-          unpressed: {
-            scale: [null, 0.85, 1],
-            backgroundColor: [
-              null,
-              "rgba(229 231 235 .25)",
-              "rgba(229 231 235 0)",
-            ],
-          },
-        }}
-        transition={{
-          type: "spring",
-          duration: 0.3,
-          bounce: 0.5,
-        }}
-        className={`flex items-center justify-center relative text-white rounded-full ${className}`}
-      >
-        {children}
-      </motion.button>
-    </AnimatePresence>
-  );
-}
-
 function clamp(number, min, max) {
   return Math.max(min, Math.min(number, max));
 }
 
-function Header() {
-  return (
-    <div className="w-full pt-3 mb-8">
-      <div className="flex items-center justify-between pl-3 pr-1 ">
-        <div className="flex items-center space-x-1.5">
-          <span className="font-semibold text-white text-[17px]">6:18</span>
-          <Icons.Location className="w-[13px] text-white" />
-        </div>
-        <div className="flex items-center space-x-1.5">
-          <Icons.Signal className="h-[18px] text-white" />
-          <Icons.Wifi className="h-[22px] text-white" />
-          <Icons.Battery className="h-[24px] text-white" />
-        </div>
-      </div>
-      <div className="mt-4 w-9 h-[5px] mx-auto rounded-full bg-white/20"></div>
-    </div>
-  );
+function useInterval(callback, delay) {
+  const intervalRef = useRef(null);
+  const savedCallback = useRef(callback);
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+  useEffect(() => {
+    const tick = () => savedCallback.current();
+    if (typeof delay === "number") {
+      intervalRef.current = window.setInterval(tick, delay);
+      return () => window.clearInterval(intervalRef.current);
+    }
+  }, [delay]);
+  return intervalRef;
 }
