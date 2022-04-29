@@ -18,8 +18,10 @@ export default function App() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="max-w-[390px] w-full flex mx-auto max-h-[844px] flex-col h-screen relative">
-        <div className="flex flex-col items-center w-full px-6 pt-[92px] flex-1 shadow-2xl rounded">
+      <div className="max-w-[390px] w-full flex mx-auto max-h-[844px] flex-col h-screen relative overflow-hidden md:rounded-xl shadow-2xl">
+        <div className="flex flex-col items-center flex-1 w-full px-6 shadow-2xl">
+          <Header />
+
           <AnimatedGradient />
 
           <motion.img
@@ -94,7 +96,7 @@ function AnimatedGradient() {
   useEffect(() => {
     let controls = animate(interval, [0, Math.PI * 2], {
       repeat: Infinity,
-      duration: 24,
+      duration: 15,
       ease: "linear",
     });
 
@@ -163,18 +165,18 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
 
   useEffect(() => {
     if (playing) {
-      let interval1Id = setInterval(() => {
+      let updateCurrentTime = setInterval(() => {
         if (currentTime < DURATION) {
           setCurrentTime((t) => t + 1);
         }
       }, 1000);
 
-      let interval2Id = setInterval(() => {
+      let updateCurrentTimePrecise = setInterval(() => {
         if (currentTime < DURATION) {
           let newCurrentTimePrecise = currentTimePrecise.get() + 0.01;
           currentTimePrecise.set(newCurrentTimePrecise);
           let newX = getXFromProgress({
-            container: fullBarRef.current,
+            containerRef: fullBarRef,
             progress: currentTimePrecise.get() / DURATION,
           });
           scrubberX.set(newX);
@@ -182,8 +184,8 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
       }, 10);
 
       return () => {
-        clearInterval(interval1Id);
-        clearInterval(interval2Id);
+        clearInterval(updateCurrentTime);
+        clearInterval(updateCurrentTimePrecise);
       };
     }
   }, [playing, currentTime, currentTimePrecise, scrubberX, setCurrentTime]);
@@ -193,7 +195,7 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
       <div
         className="relative"
         onPointerDown={(event) => {
-          let newProgress = getProgress({
+          let newProgress = getProgressFromX({
             containerRef: fullBarRef,
             x: event.clientX,
           });
@@ -225,7 +227,7 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
               let scrubberBounds = scrubberRef.current.getBoundingClientRect();
               let middleOfScrubber =
                 scrubberBounds.x + scrubberBounds.width / 2;
-              let newProgress = getProgress({
+              let newProgress = getProgressFromX({
                 containerRef: fullBarRef,
                 x: middleOfScrubber,
               });
@@ -326,7 +328,7 @@ function Volume() {
 
   useEffect(() => {
     let initialVolume = getXFromProgress({
-      container: fullBarRef.current,
+      containerRef: fullBarRef,
       progress: volume.get() / 100,
     });
     scrubberX.set(initialVolume);
@@ -348,7 +350,7 @@ function Volume() {
         <div
           className="absolute inset-0 flex items-center w-full"
           onPointerDown={(event) => {
-            let newVolume = getProgress({
+            let newVolume = getProgressFromX({
               containerRef: fullBarRef,
               x: event.clientX,
             });
@@ -372,7 +374,7 @@ function Volume() {
               let scrubberBounds = scrubberRef.current.getBoundingClientRect();
               let middleOfScrubber =
                 scrubberBounds.x + scrubberBounds.width / 2;
-              let newVolume = getProgress({
+              let newVolume = getProgressFromX({
                 containerRef: fullBarRef,
                 x: middleOfScrubber,
               });
@@ -404,17 +406,15 @@ function IconBar() {
   );
 }
 
-function getProgress({ x, containerRef }) {
+function getProgressFromX({ x, containerRef }) {
   let bounds = containerRef.current.getBoundingClientRect();
-  let draggedProgress = (x - bounds.x) / bounds.width;
-  let newProgress =
-    draggedProgress > 1 ? 1 : draggedProgress < 0 ? 0 : draggedProgress;
+  let progress = (x - bounds.x) / bounds.width;
 
-  return newProgress;
+  return clamp(progress, 0, 1);
 }
 
-function getXFromProgress({ container, progress }) {
-  let bounds = container.getBoundingClientRect();
+function getXFromProgress({ progress, containerRef }) {
+  let bounds = containerRef.current.getBoundingClientRect();
 
   return progress * bounds.width;
 }
@@ -433,52 +433,52 @@ function Button({ children, onClick = () => {}, className }) {
           setPressing(false);
           onClick();
         }}
+        variants={{
+          pressed: {
+            scale: 0.85,
+            backgroundColor: "rgba(229 231 235 .25)",
+          },
+          unpressed: {
+            scale: [null, 0.85, 1],
+            backgroundColor: [
+              null,
+              "rgba(229 231 235 .25)",
+              "rgba(229 231 235 0)",
+            ],
+          },
+        }}
+        transition={{
+          type: "spring",
+          duration: 0.3,
+          bounce: 0.5,
+        }}
         className={`flex items-center justify-center relative text-white rounded-full ${className}`}
       >
-        <motion.span
-          variants={{
-            pressed: {
-              scale: 0.85,
-              backgroundColor: "rgba(229 231 235 .25)",
-              transition: {
-                type: "spring",
-                duration: 0.3,
-                bounce: 0.5,
-              },
-            },
-            unpressed: {
-              scale: [null, 0.85, 1],
-              backgroundColor: [
-                null,
-                "rgba(229 231 235 .25)",
-                "rgba(229 231 235 0)",
-              ],
-              transition: {
-                type: "spring",
-                duration: 0.3,
-                bounce: 0.5,
-              },
-            },
-          }}
-          className="absolute inset-0 rounded-full"
-        ></motion.span>
-        <motion.span
-          variants={{
-            pressed: { scale: 0.85 },
-            unpressed: {
-              scale: [null, 0.85, 1],
-              transition: {
-                type: "spring",
-                duration: 0.6,
-                bounce: 0.5,
-              },
-            },
-          }}
-          className="block"
-        >
-          {children}
-        </motion.span>
+        {children}
       </motion.button>
     </AnimatePresence>
+  );
+}
+
+function clamp(number, min, max) {
+  return Math.max(min, Math.min(number, max));
+}
+
+function Header() {
+  return (
+    <div className="w-full pt-3 mb-8">
+      <div className="flex items-center justify-between pl-3 pr-1 ">
+        <div className="flex items-center space-x-1.5">
+          <span className="font-semibold text-white text-[17px]">6:18</span>
+          <Icons.Location className="w-[13px] text-white" />
+        </div>
+        <div className="flex items-center space-x-1.5">
+          <Icons.Signal className="h-[18px] text-white" />
+          <Icons.Wifi className="h-[22px] text-white" />
+          <Icons.Battery className="h-[24px] text-white" />
+        </div>
+      </div>
+      <div className="mt-4 w-9 h-[5px] mx-auto rounded-full bg-white/20"></div>
+    </div>
   );
 }
