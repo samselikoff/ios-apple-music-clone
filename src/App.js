@@ -105,7 +105,6 @@ function Header() {
 }
 
 function AnimatedGradient() {
-  let gradientRef = useRef();
   let interval = useMotionValue(0);
   let y = useTransform(interval, (value) => Math.sin(value) * 100);
   let x = useTransform(interval, (value) => Math.cos(value) * 100);
@@ -123,7 +122,6 @@ function AnimatedGradient() {
   return (
     <div className="absolute inset-0 z-[-1] overflow-hidden rounded-xl">
       <motion.div
-        ref={gradientRef}
         style={{
           x,
           y,
