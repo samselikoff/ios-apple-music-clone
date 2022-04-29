@@ -25,6 +25,7 @@ export default function App() {
 
           <motion.img
             src="/album.webp"
+            initial={false}
             animate={playing ? "grow" : "shrink"}
             variants={{
               grow: {
@@ -46,7 +47,7 @@ export default function App() {
                 },
               },
             }}
-            initial={false}
+            className="relative z-10 block w-full shadow-2xl rounded-xl aspect-square"
           />
 
           <div className="mt-[45px] w-full px-2">
