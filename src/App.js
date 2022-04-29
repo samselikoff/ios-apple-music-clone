@@ -214,7 +214,10 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
         >
           <div className="absolute inset-0 h-[3px] bg-[#A29CC0] rounded-full"></div>
         </motion.div>
-        <div className="absolute inset-0 -mx-[4px]" ref={constraintsRef}>
+        <div
+          className="absolute inset-0 -ml-[15px] -mr-[17px]"
+          ref={constraintsRef}
+        >
           <motion.button
             ref={scrubberRef}
             drag="x"
@@ -246,34 +249,20 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
             onDragEnd={() => {
               setDragging(false);
             }}
-            className="absolute flex items-center justify-center rounded-full -top-[2px]  cursor-grab active:cursor-grabbing"
+            className="absolute flex items-center justify-center rounded-full cursor-grab active:cursor-grabbing"
           >
             <motion.div
-              animate={{ scale: dragging ? 4.75 : 1 }}
+              animate={{ scale: dragging ? 1 : 0.25 }}
               transition={{ type: "tween", duration: 0.15 }}
-              className="w-[7px] h-[7px] bg-[#A29CC0] rounded-full"
+              className="w-[33px] h-[33px] bg-[#A29CC0] rounded-full -mt-[15px]"
             ></motion.div>
-            {/* Scaling the above div is blurry in safari, was trying this vg */}
-            {/* <motion.svg
-              animate={{ scale: dragging ? 4.75 : 1 }}
-              viewBox="0 0 10 10"
-              className="w-[7px] origin-bottom"
-            >
-              <circle
-                r="5"
-                cx="5"
-                cy="5"
-                fill="currentColor"
-                className="text-[#A29CC0]"
-              />
-            </motion.svg> */}
           </motion.button>
         </div>
       </div>
       <div className="flex justify-between mt-[11px]">
         <motion.p
           className="absolute left-0 text-[11px] font-medium tracking-wide text-white/20 tabular-nums"
-          animate={{ y: dragging && progress < 15 ? 15 : 0 }}
+          animate={{ y: dragging && progress < 13 ? 15 : 0 }}
         >
           {timecode}
         </motion.p>
