@@ -1,12 +1,13 @@
 import {
   animate,
+  LayoutGroup,
   motion,
   useDragControls,
   useMotionTemplate,
   useMotionValue,
   useTransform,
 } from "framer-motion";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Icons from "./Icons";
 
 const DURATION = 186;
@@ -53,18 +54,20 @@ export default function App() {
           <div className="mt-[45px] w-full px-2">
             <Title />
 
-            <ProgressBar
-              playing={playing}
-              currentTime={currentTime}
-              setCurrentTime={setCurrentTime}
-            />
+            <LayoutGroup>
+              <ProgressBar
+                playing={playing}
+                currentTime={currentTime}
+                setCurrentTime={setCurrentTime}
+              />
 
-            <PlayerControls
-              playing={playing}
-              onPlayPause={() => setPlaying(!playing)}
-            />
+              <PlayerControls
+                playing={playing}
+                onPlayPause={() => setPlaying(!playing)}
+              />
 
-            <Volume />
+              <Volume />
+            </LayoutGroup>
 
             <IconBar />
           </div>
@@ -221,6 +224,7 @@ function ProgressBar({ playing, currentTime, setCurrentTime }) {
           className="w-full h-[3px] bg-[#5A526F] rounded-full"
         ></div>
         <motion.div
+          layout
           style={{ width: progressPreciseWidth }}
           className="absolute top-0"
         >
@@ -328,7 +332,7 @@ function Volume() {
   let width = useMotionTemplate`${volume}%`;
   let scrubberX = useMotionValue(0);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     let initialVolume = getXFromProgress({
       containerRef: fullBarRef,
       progress: volume.get() / 100,
@@ -361,6 +365,7 @@ function Volume() {
           }}
         >
           <motion.div
+            layout
             style={{ width }}
             className="w-full h-[3px] bg-[#A29CC0] rounded-full"
           ></motion.div>
