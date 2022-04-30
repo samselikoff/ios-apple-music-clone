@@ -16,8 +16,8 @@ export default function App() {
   let [currentTime, setCurrentTime] = useState(0);
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="max-w-[390px] w-full flex mx-auto max-h-[844px] flex-col h-screen relative shadow-2xl overflow-hidden rounded-xl">
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="max-w-[390px] w-full flex mx-auto  flex-col relative shadow-2xl overflow-hidden overflow-y-scroll sm:rounded-xl">
         <div className="flex flex-col items-center flex-1 w-full px-6 shadow-2xl">
           <Header />
 
@@ -121,7 +121,7 @@ function AnimatedGradient() {
   }, [interval]);
 
   return (
-    <div className="absolute inset-0 z-[-1] overflow-hidden rounded-xl">
+    <div className="absolute inset-0 z-[-1] overflow-hidden sm:rounded-xl">
       <motion.div
         style={{
           x,
@@ -394,7 +394,7 @@ function Volume() {
 
 function IconBar() {
   return (
-    <div className="flex px-[46px] mt-6 justify-between">
+    <div className="flex px-[46px] mt-6 justify-between pb-12">
       <button className="text-[#A29CC0] active:text-white p-1">
         <Icons.Lyrics className="h-[21px]" />
       </button>
