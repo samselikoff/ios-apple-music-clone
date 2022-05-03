@@ -17,7 +17,7 @@ export default function App() {
   let [currentTime, setCurrentTime] = useState(0);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center min-h-screen sm:py-6">
       <div className="max-w-[390px] w-full flex mx-auto flex-col relative shadow-2xl overflow-hidden overflow-y-scroll sm:rounded-xl">
         <div className="flex flex-col items-center flex-1 w-full px-6 shadow-2xl">
           <Header />
@@ -74,7 +74,7 @@ export default function App() {
         </div>
       </div>
 
-      <div className="py-6 text-xs font-medium">
+      <div className="pt-6 pb-6 text-xs font-medium sm:pb-0">
         <a
           className=" text-[#273759] hover:text-[#384f80]"
           href="https://twitter.com/samselikoff"
