@@ -17,8 +17,8 @@ export default function App() {
   let [currentTime, setCurrentTime] = useState(0);
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="max-w-[390px] w-full flex mx-auto  flex-col relative shadow-2xl overflow-hidden overflow-y-scroll sm:rounded-xl">
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="max-w-[390px] w-full flex mx-auto flex-col relative shadow-2xl overflow-hidden overflow-y-scroll sm:rounded-xl">
         <div className="flex flex-col items-center flex-1 w-full px-6 shadow-2xl">
           <Header />
 
@@ -72,18 +72,22 @@ export default function App() {
             <IconBar />
           </div>
         </div>
+      </div>
 
-        {/* <div className="mt-20 text-center">
-          <p className="text-sm text-gray-500">
-            View the source: <br className="md:hidden" />
-            <a
-              className="font-medium text-gray-600 underline"
-              href="https://github.com/samselikoff/ios-podcast-scale-effect/blob/main/src/App.js"
-            >
-              github.com/samselikoff/ios-podcast-scale-effect
-            </a>
-          </p>
-        </div> */}
+      <div className="py-6 text-xs font-medium">
+        <a
+          className=" text-[#273759] hover:text-[#384f80]"
+          href="https://twitter.com/samselikoff"
+        >
+          @samselikoff
+        </a>
+        <span className="mx-2 text-[#273759]">&middot;</span>
+        <a
+          href="https://github.com/samselikoff/ios-apple-music-clone"
+          className="text-[#273759] hover:text-[#384f80]"
+        >
+          GitHub
+        </a>
       </div>
     </div>
   );
@@ -338,7 +342,6 @@ function Volume() {
       containerRef: fullBarRef,
       progress: volume.get() / 100,
     });
-    console.log({ initialVolume });
     scrubberX.set(initialVolume);
   }, [scrubberX, volume]);
 
@@ -414,7 +417,7 @@ function Volume() {
               });
               volume.set(newVolume * 100);
             }}
-            className="absolute bg-white rounded-full cursor-grab active:cursor-grabbing"
+            className="bg-white rounded-full cursor-grab active:cursor-grabbing"
           />
         </div>
       </div>
