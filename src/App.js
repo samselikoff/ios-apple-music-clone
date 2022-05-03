@@ -7,7 +7,7 @@ import {
   useMotionValue,
   useTransform,
 } from "framer-motion";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Icons from "./Icons";
 
 const DURATION = 186;
@@ -332,7 +332,7 @@ function Volume() {
   let width = useMotionTemplate`${volume}%`;
   let scrubberX = useMotionValue(0);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     let initialVolume = getXFromProgress({
       containerRef: fullBarRef,
       progress: volume.get() / 100,
