@@ -328,56 +328,83 @@ function Volume() {
   let constraintsRef = useRef();
   let scrubberRef = useRef();
   let fullBarRef = useRef();
-  let volume = useMotionValue(50);
+  let volume = useMotionValue(51.5);
   let width = useMotionTemplate`${volume}%`;
   let scrubberX = useMotionValue(0);
+  let scrubberSize = 20;
 
   useEffect(() => {
     let initialVolume = getXFromProgress({
       containerRef: fullBarRef,
       progress: volume.get() / 100,
     });
+    console.log({ initialVolume });
     scrubberX.set(initialVolume);
   }, [scrubberX, volume]);
 
   return (
-    <div className="flex items-center justify-between w-full mt-9">
+    <div className="flex items-center justify-between w-full mt-[38px]">
       <Icons.VolumeMute className="h-5 text-[#A29CC0]" />
 
-      <div className="relative flex-1 mx-3">
+      <div className="w-full px-[14px]">
         <div
-          ref={constraintsRef}
-          className="absolute top-0 -left-2 -right-2 h-[3px]"
-        ></div>
-        <div
-          ref={fullBarRef}
-          className="w-full h-[3px] bg-[#5A526F] rounded-full"
-        ></div>
-        <div
-          className="absolute inset-0 flex items-center w-full"
-          onPointerDown={(event) => {
-            let newVolume = getProgressFromX({
-              containerRef: fullBarRef,
-              x: event.clientX,
-            });
-            dragControls.start(event, { snapToCursor: true });
-            volume.set(newVolume * 100);
+          data-test="slider"
+          className="relative flex items-center flex-1 mx-3"
+          style={{
+            marginLeft: -scrubberSize / 2,
+            marginRight: -scrubberSize / 2,
           }}
         >
-          <motion.div
-            layout
-            style={{ width }}
-            className="w-full h-[3px] bg-[#A29CC0] rounded-full"
-          ></motion.div>
+          <div
+            data-test="slider-constraints"
+            ref={constraintsRef}
+            className="absolute inset-x-0 h-[3px]"
+          ></div>
+
+          <div
+            data-test="slider-background-container"
+            className="absolute flex items-center"
+            style={{ left: scrubberSize / 2, right: scrubberSize / 2 }}
+          >
+            <div
+              ref={fullBarRef}
+              data-test="slider-clickable-area"
+              className="absolute inset-x-0 flex items-center py-2 cursor-grab"
+              onPointerDown={(event) => {
+                let newVolume = getProgressFromX({
+                  containerRef: fullBarRef,
+                  x: event.clientX,
+                });
+                dragControls.start(event, { snapToCursor: true });
+                volume.set(newVolume * 100);
+              }}
+            >
+              <div
+                data-test="slider-background"
+                className="w-full h-[3px] bg-[#5A526F] rounded-full"
+              />
+            </div>
+
+            <motion.div
+              data-test="slider-current-progress"
+              className="absolute h-[3px] rounded-full bg-[#A29CC0] pointer-events-none"
+              style={{ width }}
+            />
+          </div>
+
           <motion.button
             ref={scrubberRef}
-            style={{ x: scrubberX }}
+            style={{
+              x: scrubberX,
+              width: scrubberSize,
+              height: scrubberSize,
+            }}
             drag="x"
             dragConstraints={constraintsRef}
             dragControls={dragControls}
             dragElastic={0}
             dragMomentum={false}
-            onDrag={(event) => {
+            onDrag={() => {
               let scrubberBounds = scrubberRef.current.getBoundingClientRect();
               let middleOfScrubber =
                 scrubberBounds.x + scrubberBounds.width / 2;
@@ -387,8 +414,8 @@ function Volume() {
               });
               volume.set(newVolume * 100);
             }}
-            className="absolute w-5 h-5 -ml-[5px] bg-white rounded-full cursor-grab active:cursor-grabbing"
-          ></motion.button>
+            className="absolute bg-white rounded-full cursor-grab active:cursor-grabbing"
+          />
         </div>
       </div>
 
